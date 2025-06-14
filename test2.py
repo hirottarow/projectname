@@ -2,22 +2,28 @@ import subprocess
 
 def test_git_push():
     try:
-        # 現在の変更をステージング（ここは確認用なので無理にコミットしなくてもOK）
         subprocess.run(["git", "add", "."], check=True)
 
-        # ダミーコミット（何も変更がなければエラーになるので例外処理で無視）
         try:
             subprocess.run(["git", "commit", "-m", "Test commit for push verification"], check=True)
         except subprocess.CalledProcessError:
             print("コミットすべき変更なし。")
 
-        # プッシュを試みる
-        subprocess.run(["git", "push"], check=True)
-
+        # pushの結果をキャプチャする
+        result = subprocess.run(["git", "push"], check=True, capture_output=True, text=True)
         print("GitHubへのプッシュが成功しました！")
+        print("---- git push output ----")
+        print(result.stdout)
 
     except subprocess.CalledProcessError as e:
-        print("Git操作でエラーが発生しました:", e)
+        print("Git操作でエラーが発生しました:")
+        print(e)
+        if e.stdout:
+            print("標準出力:")
+            print(e.stdout)
+        if e.stderr:
+            print("標準エラー出力:")
+            print(e.stderr)
 
 if __name__ == "__main__":
     test_git_push()
