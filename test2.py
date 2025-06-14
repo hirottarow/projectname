@@ -1,18 +1,20 @@
 import subprocess
 
-def test_git_push():
+def git_sync_and_push():
     try:
         subprocess.run(["git", "add", "."], check=True)
 
         try:
-            subprocess.run(["git", "commit", "-m", "Test commit for push verification"], check=True)
+            subprocess.run(["git", "commit", "-m", "Auto commit before push"], check=True)
         except subprocess.CalledProcessError:
-            print("コミットすべき変更なし。")
+            print("コミットすべき変更はありません。")
 
-        # pushの結果をキャプチャする
+        # リモートの変更を取得してリベースで反映
+        subprocess.run(["git", "pull", "--rebase"], check=True)
+
+        # プッシュ実行
         result = subprocess.run(["git", "push"], check=True, capture_output=True, text=True)
         print("GitHubへのプッシュが成功しました！")
-        print("---- git push output ----")
         print(result.stdout)
 
     except subprocess.CalledProcessError as e:
@@ -26,4 +28,4 @@ def test_git_push():
             print(e.stderr)
 
 if __name__ == "__main__":
-    test_git_push()
+    git_sync_and_push()
