@@ -1,31 +1,31 @@
 import subprocess
 
-def git_sync_and_push():
-    try:
-        subprocess.run(["git", "add", "."], check=True)
+git_dir = r"C:\Users\geten\Documents\GitHub\projectname\.git"
+work_tree = r"C:\Users\geten\Documents\GitHub\projectname"
+file_to_add = "README.md"  # ここをプッシュしたいファイル名に書き換えてください
 
-        try:
-            subprocess.run(["git", "commit", "-m", "Auto commit before push"], check=True)
-        except subprocess.CalledProcessError:
-            print("コミットすべき変更はありません。")
+try:
+    # git add
+    subprocess.run(
+        ["git", "--git-dir", git_dir, "--work-tree", work_tree, "add", file_to_add],
+        check=True
+    )
+    print(f"{file_to_add} をステージングしました。")
 
-        # リモートの変更を取得してリベースで反映
-        subprocess.run(["git", "pull", "--rebase"], check=True)
+    # git commit
+    commit_message = f"Add or update {file_to_add}"
+    subprocess.run(
+        ["git", "--git-dir", git_dir, "--work-tree", work_tree, "commit", "-m", commit_message],
+        check=True
+    )
+    print("コミットしました。")
 
-        # プッシュ実行
-        result = subprocess.run(["git", "push"], check=True, capture_output=True, text=True)
-        print("GitHubへのプッシュが成功しました！")
-        print(result.stdout)
+    # git push
+    subprocess.run(
+        ["git", "--git-dir", git_dir, "--work-tree", work_tree, "push"],
+        check=True
+    )
+    print("プッシュ成功")
 
-    except subprocess.CalledProcessError as e:
-        print("Git操作でエラーが発生しました:")
-        print(e)
-        if e.stdout:
-            print("標準出力:")
-            print(e.stdout)
-        if e.stderr:
-            print("標準エラー出力:")
-            print(e.stderr)
-
-if __name__ == "__main__":
-    git_sync_and_push()
+except subprocess.CalledProcessError as e:
+    print("Git操作でエラー:", e)
