@@ -2,95 +2,65 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>新規ファンリスト</title>
-
-  <!-- DataTables CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <!-- DataTables Responsive CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>訪問者リスト</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: sans-serif;
       margin: 20px;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-
-    h1 {
-      text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
     }
 
     table {
-      border-collapse: collapse;
       width: 100%;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-collapse: collapse;
+      table-layout: auto;
     }
 
     th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
       text-align: left;
-      padding: 12px;
-      border-bottom: 1px solid #ddd;
+      word-break: break-word;
     }
 
-    th {
-      background-color: #3498db;
-      color: white;
+    thead {
+      background-color: #f0f0f0;
     }
 
-    tr:hover {
-      background-color: #f1f1f1;
+    /* スマホでも縦長になりすぎないよう横スクロール対応 */
+    .table-wrapper {
+      overflow-x: auto;
     }
 
-    @media (max-width: 768px) {
-      body {
-        margin: 10px;
+    /* USERID列を必ず表示する（非表示制御なし） */
+    @media screen and (max-width: 600px) {
+      table {
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
-  <h1>新規ファンリスト</h1>
-  <table id="fanTable" class="display responsive nowrap" style="width:100%">
-    <thead>
-      <tr>
-        <th>名前</th>
-        <th>訪問回数</th>
-        <th>日時</th>
-        <th>ユーザーID</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- ここにデータ行が入ります -->
-      <tr><td>山田太郎</td><td>1</td><td>2025/06/18 08:00</td><td>user123</td></tr>
-      <tr><td>佐藤花子</td><td>1</td><td>2025/06/18 09:30</td><td>user456</td></tr>
-      <tr><td>鈴木次郎</td><td>2</td><td>2025/06/18 10:15</td><td>user789</td></tr>
-    </tbody>
-  </table>
-
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <!-- DataTables JS -->
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <!-- DataTables Responsive JS -->
-  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-
-  <script>
-    $(document).ready(function() {
-      $('#fanTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        language: {
-          url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ja.json"
-        }
-      });
-    });
-  </script>
+  <h1>訪問者リスト</h1>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>名前</th>
+          <th>訪問回数</th>
+          <th>日時</th>
+          <th>USERID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>山田太郎</td><td>1</td><td>2025/06/18 08:00</td><td>user123</td></tr>
+        <tr><td>佐藤花子</td><td>1</td><td>2025/06/18 09:30</td><td>user456</td></tr>
+        <tr><td>鈴木次郎</td><td>2</td><td>2025/06/18 10:15</td><td>user789</td></tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
+
 
