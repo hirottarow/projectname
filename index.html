@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Showroom データリンク</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -39,11 +39,12 @@
       color: #fff;
       text-decoration: none;
       margin: 15px 0;
-      padding: 15px 25px;
+      padding: 20px 25px;
       border-radius: 10px;
-      font-size: 18px;
+      font-size: 20px;
       transition: all 0.3s ease;
       border: 1px solid rgba(255, 255, 255, 0.3);
+      text-align: center;
     }
 
     .link-button:hover {
@@ -51,14 +52,21 @@
       color: #000;
     }
 
-    @media (max-width: 500px) {
-      .container {
-        padding: 20px;
-      }
+    .note {
+      font-size: 12px;
+      color: #ddd;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
 
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 15px;
+      }
       .link-button {
-        font-size: 16px;
-        padding: 12px 20px;
+        font-size: 18px;
+        padding: 18px 20px;
       }
     }
   </style>
@@ -72,6 +80,18 @@
     <a class="link-button" href="https://hirottarow.github.io/projectname/gantt_chart.html" target="_blank">
       📅 配信時間（ガントチャート）
     </a>
+
+    <a class="link-button" href="output/report_month.html" target="_blank">
+      MUMU🎗️(今月)
+    </a>
+
+    <a class="link-button" href="output/report_all.html" target="_blank">
+      MUMU🎗️(全期間)
+    </a>
+    <div class="note">
+      ※データ容量が大きいので開くまで時間がかかります
+    </div>
+
     <a class="link-button" href="https://hirottarow.github.io/projectname/visits.html" target="_blank">
       👣 訪問回数記録
     </a>
