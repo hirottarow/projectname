@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>訪問回数記録（今月分）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0; padding: 20px;
+      background: #f9f9f9;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.6em;
+      color: #333;
+    }
+    .nav-button {
+      font-size: 14px;
+      padding: 6px 12px;
+      background-color: #f0f0f0;
+      border: 1px solid #999;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #000;
+      transition: background-color 0.3s ease;
+    }
+    .nav-button:hover {
+      background-color: #ddd;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background-color: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    thead {
+      background-color: #2a76d2;
+      color: #fff;
+      font-weight: 700;
+      text-align: left;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    tbody tr:nth-child(odd) {
+      background-color: #fafafa;
+    }
+    tbody tr:hover {
+      background-color: #cce5ff;
+    }
+    .id-link {
+      color: #1565c0;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>訪問回数記録（今月分）</h1>
+    <a href="visit_all.html" class="nav-button">全期間 ▶</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>名前</th>
+        <th>訪問回数🎉</th>
+        <th>ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td>2025/07/02 04:49</td>
+        <td>まっつあん👑🎼☪️❤️🎻</td>
+        <td>まっつあん👑🎼☪️❤️🎻さんが200回目の訪問🎉</td>
+        <td><a href="visit_all.html?id=1458255" class="id-link">1458255</a></td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+</body>
+</html>
