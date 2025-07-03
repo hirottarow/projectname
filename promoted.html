@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>レベル10到達者一覧</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f8f9fa; }
+h2 { color: #333; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th { background-color: #e9ecef; cursor: pointer; }
+tr.new { background-color: #fff9e6 !important; }
+.nav { margin-bottom: 20px; }
+.nav a { margin-right: 10px; text-decoration: none; color: #007bff; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="promoted_2025_06.html">← 前月</a>
+  <a href="promoted_2025_08.html">次月 →</a>
+</div>
+
+<h2>📈 レベル10到達者一覧（2025年7月）</h2>
+<table>
+<thead><tr><th>No.</th><th>名前</th><th>日時</th><th>snapshot_id</th></tr></thead>
+<tbody>
+<tr><td>3</td><td>ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱</td><td>2025/07/02 14:02:15</td><td>23</td></tr>
+<tr><td>2</td><td>YOSHI🔱EMILY&YUHA🎗コヘミ🌺</td><td>2025/07/01 19:02:35</td><td>21</td></tr>
+<tr><td>1</td><td>無言𝓡𝓮𝓷𝓡𝓮𝓷 ママ🎗️</td><td>2025/07/01 14:04:19</td><td>20</td></tr>
+
+</tbody>
+</table>
+<script>
+document.querySelectorAll("th").forEach(header => {
+  header.addEventListener("click", () => {
+    const table = header.closest("table");
+    const tbody = table.querySelector("tbody");
+    const index = Array.from(header.parentNode.children).indexOf(header);
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const asc = header.asc = !header.asc;
+    rows.sort((a, b) => {
+      const tda = a.children[index].textContent.trim();
+      const tdb = b.children[index].textContent.trim();
+      return (tda > tdb ? 1 : tda < tdb ? -1 : 0) * (asc ? 1 : -1);
+    });
+    rows.forEach(row => tbody.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>
