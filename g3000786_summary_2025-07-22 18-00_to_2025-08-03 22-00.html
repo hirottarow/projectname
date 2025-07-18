@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>g=3000786 集計結果</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4fff4;
+            padding: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #e9ffe9;
+        }
+        th, td {
+            border: 1px solid #aaddaa;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #bfffbf;
+            cursor: pointer;
+        }
+        tr:nth-child(even) {
+            background-color: #f0fff0;
+        }
+        .total-n-sum {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #2a7d2a;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net@2.0.8/js/dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-dt@2.0.8/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <h2>俳優王ギフト = 3000786 集計結果（2025-07-22 18:00 ～ 2025-08-03 22:00）</h2>
+    <div class="total-n-sum">累積ギフト の総合計: 0　個</div>
+    <div class="total-n-sum">ギフトしたユーザー数: 0 人</div>
+    <table id="result_table">
+        <thead>
+            <tr>
+                <th>ユーザーID</th>
+                <th>俳優王個数</th>
+                <th>初登場日</th>
+                <th>ユーザー名</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+        new DataTable('#result_table', {
+            order: [[2, 'desc']],
+            pageLength: 100,
+            lengthMenu: [ [10, 25, 50, 100, 250, 500, 1000], [10, 25, 50, 100, 250, 500, 1000] ]
+        });
+    </script>
+
+
+</body>
+</html>
