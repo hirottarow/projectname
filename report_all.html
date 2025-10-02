@@ -41,6 +41,10 @@
     .filter-controls {
       margin: 10px 0;
     }
+    input[type="month"] {
+      padding: 6px;
+      font-size: 14px;
+    }
     button {
       padding: 6px 12px;
       font-size: 14px;
@@ -87,6 +91,8 @@
   <a href="report_month.html" class="top-right-button">今月 ▶</a>
 
   <div class="filter-controls">
+    <label for="monthFilter">年月フィルター：</label>
+    <input type="month" id="monthFilter" onchange="filterByMonth()">
     <button onclick="clearFilter()">フィルター解除</button>
   </div>
 
@@ -20734,6 +20740,7 @@
       const url = new URL(window.location.href);
       return url.searchParams.get(name);
     }
+
     function filterByID(id) {
       const rows = document.querySelectorAll("tbody tr");
       rows.forEach(row => {
@@ -20741,10 +20748,25 @@
         row.style.display = (cellID === id) ? "" : "none";
       });
     }
+
+    function filterByMonth() {
+      const monthValue = document.getElementById("monthFilter").value; // "2025-10"
+      if (!monthValue) return;
+      const ym = monthValue.replace("-", "/"); // "2025/10"
+      const rows = document.querySelectorAll("tbody tr");
+      rows.forEach(row => {
+        const dateText = row.cells[0]?.textContent?.trim(); // "2025/10/02"
+        const rowYM = dateText.slice(0, 7); // "2025/10"
+        row.style.display = (rowYM === ym) ? "" : "none";
+      });
+    }
+
     function clearFilter() {
+      document.getElementById("monthFilter").value = "";
       const rows = document.querySelectorAll("tbody tr");
       rows.forEach(row => row.style.display = "");
     }
+
     window.addEventListener("DOMContentLoaded", () => {
       const id = getParam("id");
       if (id) filterByID(id);
