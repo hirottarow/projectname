@@ -31,6 +31,29 @@
       font-weight: 700;
     }
 
+    .link-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .half-button {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      text-decoration: none;
+      padding: 20px 10px;
+      border-radius: 10px;
+      font-size: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: 0.3s;
+    }
+
+    .half-button:hover {
+      background: rgba(255,255,255,0.4);
+      color: #000;
+    }
+
     .link-button {
       display: block;
       background: rgba(255, 255, 255, 0.2);
@@ -58,17 +81,6 @@
       text-align: center;
     }
 
-    @media (max-width: 600px) {
-      .container {
-        padding: 30px 15px;
-      }
-      .link-button {
-        font-size: 18px;
-        padding: 18px 20px;
-      }
-    }
-
-    /* CSVテーブル用 */
     #csv-display {
       background: rgba(255,255,255,0.2);
       color: #fff;
@@ -83,66 +95,37 @@
 </head>
 <body>
   <div class="container">
-    <h1>Showroom データリンク</h1>
-
-    <a class="link-button" href="https://docs.google.com/spreadsheets/d/1Y-hK1jdaFP5sMSnIHQXtN8F4kzo-vpyvHwjIo7KQ0Ig/edit?gid=0#gid=0" target="_blank">
-      🎗️ イベントポイント画像管理（テスト）📅
-    </a>
-
-    <a class="link-button" href="g3001462_1601_summary_2025-11-14 17-00_to_2025-11-26 00-03.html" target="_blank">
-      🎗️ アップカミング予選 🧸＆🌠（今月）
-    </a>
-
-    <div id="csv-display">
-      ⏳ CSV読み込み中...
+   <h1>Showroom データリンク</h1>
+    <!-- 🔥 追加した2分割リンク -->
+    <div class="link-row">
+      <a class="half-button" href="https://sr-live-server.onrender.com/" target="_blank">ゆはっちろぐ📝</a>
+      <a class="half-button" href="https://sr-live-server.onrender.com/sr_live_beta.html" target="_blank">ベータ版</a>
     </div>
 
-    <a class="link-button" href="report_month.html" target="_blank">
-      🎗️ MUMU（今月）
-    </a>
+    <a class="link-button" href="https://docs.google.com/spreadsheets/d/1Y-hK1jdaFP5sMSnIHQXtN8F4kzo-vpyvHwjIo7KQ0Ig/edit?gid=0#gid=0" target="_blank">🎗️ イベントポイント画像管理（テスト）📅</a>
 
-    <a class="link-button" href="report_all.html" target="_blank">
-      🎗️ MUMU（全期間）
-    </a>
-    <div class="note">
-      ※ データ容量が大きい場合は読み込みに時間がかかることがあります
-    </div>
+    <a class="link-button" href="g3001462_1601_summary_2025-11-14 17-00_to_2025-11-26 00-03.html" target="_blank">🎗️ アップカミング予選 🧸＆🌠（今月）</a>
 
-    <a class="link-button" href="visit_month.html" target="_blank">
-      👣 訪問記録（今月）
-    </a>
+    <div id="csv-display">⏳ CSV読み込み中...</div>
 
-    <a class="link-button" href="visit_all.html" target="_blank">
-      👣 訪問記録（全期間）
-    </a>
+    <a class="link-button" href="report_month.html" target="_blank">🎗️ MUMU（今月）</a>
+    <a class="link-button" href="report_all.html" target="_blank">🎗️ MUMU（全期間）</a>
 
-    <div class="note">
-      ※ データ容量が大きい場合は読み込みに時間がかかることがあります
-    </div>
+    <div class="note">※ データ容量が大きい場合は読み込みに時間がかかることがあります</div>
 
-    <a class="link-button" href="promoted.html" target="_blank">
-      🎗️ MUMU (AI🤖)
-    </a>
+    <a class="link-button" href="visit_month.html" target="_blank">👣 訪問記録（今月）</a>
+    <a class="link-button" href="visit_all.html" target="_blank">👣 訪問記録（全期間）</a>
 
-    <a class="link-button" href="snapshot_logs_summary.html" target="_blank">
-      🎗️ MUMUランキング履歴 (AI履歴🤖)
-    </a>
+    <div class="note">※ データ容量が大きい場合は読み込みに時間がかかることがあります</div>
 
-    <a class="link-button" href="https://hirottarow.github.io/projectname/fan_stats.html" target="_blank">
-      📊 ファン人数・ファンパワー
-    </a>
+    <a class="link-button" href="promoted.html" target="_blank">🎗️ MUMU (AI🤖)</a>
+    <a class="link-button" href="snapshot_logs_summary.html" target="_blank">🎗️ MUMUランキング履歴 (AI履歴🤖)</a>
 
-    <a class="link-button" href="https://hirottarow.github.io/projectname/gantt_chart.html" target="_blank">
-      📅 配信時間（ガントチャート）
-    </a>
-    
-    <a class="link-button" href="g3001146_summary_2025-07-22 18-00_to_2025-08-03 22-00.html" target="_blank" style="background: gold; color: #000; font-weight: bold;">
-     👑 俳優王2025
-    </a>
+    <a class="link-button" href="https://hirottarow.github.io/projectname/fan_stats.html" target="_blank">📊 ファン人数・ファンパワー</a>
+    <a class="link-button" href="https://hirottarow.github.io/projectname/gantt_chart.html" target="_blank">📅 配信時間（ガントチャート）</a>
 
-    <a class="link-button" href="g3000786_summary_2024-09-02 8-00_to_2024-09-16 23-30.html" target="_blank" style="background: gold; color: #000; font-weight: bold;">
-     👑 俳優王2024
-    </a>
+    <a class="link-button" href="g3001146_summary_2025-07-22 18-00_to_2025-08-03 22-00.html" target="_blank" style="background: gold; color: #000; font-weight: bold;">👑 俳優王2025</a>
+    <a class="link-button" href="g3000786_summary_2024-09-02 8-00_to_2024-09-16 23-30.html" target="_blank" style="background: gold; color: #000; font-weight: bold;">👑 俳優王2024</a>
 
   </div>
 </body>
