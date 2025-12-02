@@ -10,7 +10,7 @@ body { font-family: sans-serif; margin: 0; padding: 0; }
 table { border-collapse: collapse; width: 100%; }
 th, td { border: 1px solid #000; padding: 4px; text-align: left; }
 th { background-color: #eee; cursor: pointer; }
-.status-cell { text-align: center; font-weight: bold; width: 80px; }
+.status-cell { text-align: center; font-weight: bold; width: 50px; }
 .button-container { margin-bottom: 10px; }
 .toggle-btn {
     padding: 5px 10px;
@@ -24,19 +24,39 @@ header { padding: 10px; background:#333; color:#fff; text-align:center; }
 header h1 { margin:0; font-size:1.5em; }
 header h2 { margin:5px 0 0 0; font-size:1.2em; }
 header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
+.backup-selector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.backup-selector select {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
 
 <header>
 <h2>ちょっと待って!?もう12月!?  ぴえん祭り2025[Silver1~Silver3]3</h2>
+<div class="backup-selector">
+    <select id="backupFileSelector" onchange="navigateToBackup()">
+        <option value="">-- 過去のイベント --</option>
+<option value="htmlbk/20251201_pienfes_2025.html">20251201_pienfes_2025.html</option>
+<option value="htmlbk/20251124_amatsukamusic2.html">20251124_amatsukamusic2.html</option>
+    </select>
+</div>
 </header>
 
 <div class="container">
 
   <!-- 左側: 到達者表 -->
   <div class="column">
-    <h2>到達者（〇=確定 / △=保留）　目標ポイント：1500pt</h2>
+    <h2>到達者（〇=確定 / △=保留）　目標ポイント：{target_point}pt</h2>
     <div class="button-container">
       <span class="toggle-btn active">今回</span>
     </div>
@@ -44,7 +64,7 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
     <thead>
       <tr>
         <th onclick="sortTable('reachedTable',0)">No</th>
-        <th onclick="sortTable('reachedTable',1)">〇△</th>
+        <th onclick="sortTable('reachedTable',1)">状態</th>
         <th onclick="sortTable('reachedTable',2)">名前</th>
         <th onclick="sortTable('reachedTable',3)">ポイント</th>
         <th onclick="sortTable('reachedTable',4)">EEUID</th>
@@ -135,22 +155,22 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 <tr class='current'><td>47</td><td>ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱</td><td>144</td></tr>
 <tr class='current'><td>48</td><td>とんぷぅ♬</td><td>144</td></tr>
 <tr class='current'><td>49</td><td>緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8</td><td>120</td></tr>
-<tr class='current'><td>50</td><td>Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️</td><td>120</td></tr>
-<tr class='current'><td>51</td><td>ひでぴ〜 🌻🐠 🐱</td><td>120</td></tr>
+<tr class='current'><td>50</td><td>ひでぴ〜 🌻🐠 🐱</td><td>120</td></tr>
+<tr class='current'><td>51</td><td>Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️</td><td>120</td></tr>
 <tr class='current'><td>52</td><td>J君🍀🍌🍵🌸菜緒の忠犬わんだほー</td><td>120</td></tr>
 <tr class='current'><td>53</td><td>たずたろう⑤🐠🦀♔まりりん</td><td>120</td></tr>
 <tr class='current'><td>54</td><td>カルガモ＠えんなしゃん💀MIYAT💜miya💚</td><td>120</td></tr>
-<tr class='current'><td>55</td><td>♦️赤いべべ着た金魚にゃ</td><td>120</td></tr>
-<tr class='current'><td>56</td><td>🈚️ひろきち</td><td>120</td></tr>
+<tr class='current'><td>55</td><td>🈚️ひろきち</td><td>120</td></tr>
+<tr class='current'><td>56</td><td>♦️赤いべべ着た金魚にゃ</td><td>120</td></tr>
 <tr class='current'><td>57</td><td>(無)ドラガリノロー@みこるーむ・池松美湖</td><td>120</td></tr>
-<tr class='current'><td>58</td><td>🦋🖤アオイヒロ🦋🖤@暴走者[全無投げ逃げ]</td><td>120</td></tr>
-<tr class='current'><td>59</td><td>すま(無)@陽香留👑🎼</td><td>120</td></tr>
+<tr class='current'><td>58</td><td>すま(無)@陽香留👑🎼</td><td>120</td></tr>
+<tr class='current'><td>59</td><td>🦋🖤アオイヒロ🦋🖤@暴走者[全無投げ逃げ]</td><td>120</td></tr>
 <tr class='current'><td>60</td><td>よし🍎🐛</td><td>120</td></tr>
 <tr class='current'><td>61</td><td>しゃば～に@じわるちゃん🍿⌒︎*</td><td>120</td></tr>
 <tr class='current'><td>62</td><td>タカ1221 🍎🐛🍑🏹</td><td>120</td></tr>
 <tr class='current'><td>63</td><td>ゅん。𝄑𝄑🐶𝄑𝄑</td><td>120</td></tr>
-<tr class='current'><td>64</td><td>ろい⚓えんな海賊団💎🏴‍☠️</td><td>120</td></tr>
-<tr class='current'><td>65</td><td>reddevil0620🇰🇷</td><td>120</td></tr>
+<tr class='current'><td>64</td><td>reddevil0620🇰🇷</td><td>120</td></tr>
+<tr class='current'><td>65</td><td>ろい⚓えんな海賊団💎🏴‍☠️</td><td>120</td></tr>
 <tr class='current'><td>66</td><td>無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん</td><td>120</td></tr>
 <tr class='current'><td>67</td><td>(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機</td><td>120</td></tr>
 <tr class='current'><td>68</td><td>セロー@みこるーむ🧸🌻</td><td>120</td></tr>
@@ -161,16 +181,16 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 <tr class='current'><td>73</td><td>えいじ🦋🎤🍀🪽‪☕🥛🍞</td><td>120</td></tr>
 <tr class='current'><td>74</td><td>饑神 龘</td><td>120</td></tr>
 <tr class='current'><td>75</td><td>ノラあち😸ᩚ</td><td>120</td></tr>
-<tr class='current'><td>76</td><td>레서 판다 Lesser PANDA 🇰🇷</td><td>120</td></tr>
-<tr class='current'><td>77</td><td>EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰</td><td>120</td></tr>
+<tr class='current'><td>76</td><td>EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰</td><td>120</td></tr>
+<tr class='current'><td>77</td><td>레서 판다 Lesser PANDA 🇰🇷</td><td>120</td></tr>
 <tr class='current'><td>78</td><td>🕊️けいちゃん@そなち🐮🌼</td><td>120</td></tr>
 <tr class='current'><td>79</td><td>みや虎@ゆいな 👀.</td><td>120</td></tr>
 <tr class='current'><td>80</td><td>アカハニャのトニャカイ@じわるちゃん🍿⌒︎*</td><td>120</td></tr>
 <tr class='current'><td>81</td><td>bdss@⭕️あこ@明莉@りせなー@みつ会@荒咲要@☀️🌺</td><td>120</td></tr>
 <tr class='current'><td>82</td><td>㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱</td><td>120</td></tr>
 <tr class='current'><td>83</td><td>リンクス☃</td><td>120</td></tr>
-<tr class='current'><td>84</td><td>【水曜、日中不在】かむにい☺︎</td><td>120</td></tr>
-<tr class='current'><td>85</td><td>tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ</td><td>120</td></tr>
+<tr class='current'><td>84</td><td>tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ</td><td>120</td></tr>
+<tr class='current'><td>85</td><td>【水曜、日中不在】かむにい☺︎</td><td>120</td></tr>
 <tr class='current'><td>86</td><td>🌈けい☆彡 SNOOPYのお家🐼🌈</td><td>120</td></tr>
 <tr class='current'><td>87</td><td>トウタイspec0.0</td><td>120</td></tr>
 <tr class='current'><td>88</td><td>ねいろꕤ酒ガチャのクランド様とコラボ中</td><td>120</td></tr>
@@ -194,6 +214,29 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 </div>
 
 <script>
+// バックアップファイルへのナビゲーション
+function navigateToBackup() {
+    var selector = document.getElementById('backupFileSelector');
+    var selectedFile = selector.value;
+    if (selectedFile) {
+        // 現在のパスが htmlbk を含んでいるか簡易チェック
+        var path = window.location.pathname;
+        if (path.includes("htmlbk") || path.includes("reached_and_ranking_")) {
+             // htmlbkフォルダ内にいると仮定 (ファイル名規則による)
+             // selectedFile は "htmlbk/filename.html" の形式で渡ってくる想定
+             // なので、 "../" + selectedFile でルートに戻ってからアクセスするか、
+             // 単に同じフォルダにあるなら "filename.html" だけでいい
+             
+             // selectedFile からファイル名だけ抽出
+             var fname = selectedFile.split('/').pop();
+             window.location.href = fname;
+        } else {
+            // ルートにいる場合
+            window.location.href = selectedFile;
+        }
+    }
+}
+
 // 汎用テーブルソート関数
 function sortTable(tableId, n) {
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -275,22 +318,22 @@ var currentRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング�
 47,ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱,144
 48,とんぷぅ♬,144
 49,緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8,120
-50,Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️,120
-51,ひでぴ〜 🌻🐠 🐱,120
+50,ひでぴ〜 🌻🐠 🐱,120
+51,Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️,120
 52,J君🍀🍌🍵🌸菜緒の忠犬わんだほー,120
 53,たずたろう⑤🐠🦀♔まりりん,120
 54,カルガモ＠えんなしゃん💀MIYAT💜miya💚,120
-55,♦️赤いべべ着た金魚にゃ,120
-56,🈚️ひろきち,120
+55,🈚️ひろきち,120
+56,♦️赤いべべ着た金魚にゃ,120
 57,(無)ドラガリノロー@みこるーむ・池松美湖,120
-58,🦋🖤アオイヒロ🦋🖤@暴走者[全無投げ逃げ],120
-59,すま(無)@陽香留👑🎼,120
+58,すま(無)@陽香留👑🎼,120
+59,🦋🖤アオイヒロ🦋🖤@暴走者[全無投げ逃げ],120
 60,よし🍎🐛,120
 61,しゃば～に@じわるちゃん🍿⌒︎*,120
 62,タカ1221 🍎🐛🍑🏹,120
 63,ゅん。𝄑𝄑🐶𝄑𝄑,120
-64,ろい⚓えんな海賊団💎🏴‍☠️,120
-65,reddevil0620🇰🇷,120
+64,reddevil0620🇰🇷,120
+65,ろい⚓えんな海賊団💎🏴‍☠️,120
 66,無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん,120
 67,(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機,120
 68,セロー@みこるーむ🧸🌻,120
@@ -301,16 +344,16 @@ var currentRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング�
 73,えいじ🦋🎤🍀🪽‪☕🥛🍞,120
 74,饑神 龘,120
 75,ノラあち😸ᩚ,120
-76,레서 판다 Lesser PANDA 🇰🇷,120
-77,EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,120
+76,EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,120
+77,레서 판다 Lesser PANDA 🇰🇷,120
 78,🕊️けいちゃん@そなち🐮🌼,120
 79,みや虎@ゆいな 👀.,120
 80,アカハニャのトニャカイ@じわるちゃん🍿⌒︎*,120
 81,bdss@⭕️あこ@明莉@りせなー@みつ会@荒咲要@☀️🌺,120
 82,㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱,120
 83,リンクス☃,120
-84,【水曜、日中不在】かむにい☺︎,120
-85,tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ,120
+84,tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ,120
+85,【水曜、日中不在】かむにい☺︎,120
 86,🌈けい☆彡 SNOOPYのお家🐼🌈,120
 87,トウタイspec0.0,120
 88,ねいろꕤ酒ガチャのクランド様とコラボ中,120
@@ -375,22 +418,22 @@ var prevRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準�
 47,ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱,144
 48,とんぷぅ♬,144
 49,緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8,120
-50,Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️,120
-51,ひでぴ〜 🌻🐠 🐱,120
+50,ひでぴ〜 🌻🐠 🐱,120
+51,Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️,120
 52,J君🍀🍌🍵🌸菜緒の忠犬わんだほー,120
 53,たずたろう⑤🐠🦀♔まりりん,120
 54,カルガモ＠えんなしゃん💀MIYAT💜miya💚,120
-55,♦️赤いべべ着た金魚にゃ,120
-56,🈚️ひろきち,120
+55,🈚️ひろきち,120
+56,♦️赤いべべ着た金魚にゃ,120
 57,(無)ドラガリノロー@みこるーむ・池松美湖,120
-58,🦋🖤アオイヒロ🦋🖤@暴走者[全無投げ逃げ],120
-59,すま(無)@陽香留👑🎼,120
+58,すま(無)@陽香留👑🎼,120
+59,🦋🖤アオイヒロ🦋🖤@暴走者[全無投げ逃げ],120
 60,よし🍎🐛,120
 61,しゃば～に@じわるちゃん🍿⌒︎*,120
 62,タカ1221 🍎🐛🍑🏹,120
 63,ゅん。𝄑𝄑🐶𝄑𝄑,120
-64,ろい⚓えんな海賊団💎🏴‍☠️,120
-65,reddevil0620🇰🇷,120
+64,reddevil0620🇰🇷,120
+65,ろい⚓えんな海賊団💎🏴‍☠️,120
 66,無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん,120
 67,(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機,120
 68,セロー@みこるーむ🧸🌻,120
@@ -401,16 +444,16 @@ var prevRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準�
 73,えいじ🦋🎤🍀🪽‪☕🥛🍞,120
 74,饑神 龘,120
 75,ノラあち😸ᩚ,120
-76,레서 판다 Lesser PANDA 🇰🇷,120
-77,EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,120
+76,EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,120
+77,레서 판다 Lesser PANDA 🇰🇷,120
 78,🕊️けいちゃん@そなち🐮🌼,120
 79,みや虎@ゆいな 👀.,120
 80,アカハニャのトニャカイ@じわるちゃん🍿⌒︎*,120
 81,bdss@⭕️あこ@明莉@りせなー@みつ会@荒咲要@☀️🌺,120
 82,㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱,120
 83,リンクス☃,120
-84,【水曜、日中不在】かむにい☺︎,120
-85,tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ,120
+84,tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ,120
+85,【水曜、日中不在】かむにい☺︎,120
 86,🌈けい☆彡 SNOOPYのお家🐼🌈,120
 87,トウタイspec0.0,120
 88,ねいろꕤ酒ガチャのクランド様とコラボ中,120

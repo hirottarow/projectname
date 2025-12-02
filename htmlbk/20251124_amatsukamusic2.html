@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang='ja'>
+<head>
+<meta charset='UTF-8'>
+<title>到達メンバー & ポイントランキング</title>
+<style>
+body { font-family: sans-serif; margin: 0; padding: 0; }
+.container { display: flex; gap: 20px; padding: 10px; }
+.column { flex: 1; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+th { background-color: #eee; cursor: pointer; }
+.status-cell { text-align: center; font-weight: bold; width: 80px; }
+.button-container { margin-bottom: 10px; }
+.toggle-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    border: 1px solid #666;
+    background-color: #fff;
+}
+.toggle-btn.active { background-color: #4CAF50; color: #fff; }
+header { padding: 10px; background:#333; color:#fff; text-align:center; }
+header h1 { margin:0; font-size:1.5em; }
+header h2 { margin:5px 0 0 0; font-size:1.2em; }
+header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
+</style>
+</head>
+<body>
+
+<header>
+<h2>KONAMI音ゲー・歌手など実績多数！Amatsukaによる楽曲提供イベント！</h2>
+</header>
+
+<div class="container">
+
+  <!-- 左側: 到達者表 -->
+  <div class="column">
+    <h2>到達者（〇=確定 / △=保留）　目標ポイント：2500pt</h2>
+    <div class="button-container">
+      <span class="toggle-btn active">今回</span>
+    </div>
+    <table id="reachedTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable('reachedTable',0)">No</th>
+        <th onclick="sortTable('reachedTable',1)">〇△</th>
+        <th onclick="sortTable('reachedTable',2)">名前</th>
+        <th onclick="sortTable('reachedTable',3)">ポイント</th>
+        <th onclick="sortTable('reachedTable',4)">EEUID</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr><td>61</td><td class='status-cell'>〇</td><td>カズ🌸💫</td><td>2500</td><td>61</td></tr>
+<tr><td>60</td><td class='status-cell'>〇</td><td>しんくんたん【さん付け不要】🎗🖤🐨 Ω</td><td>2515</td><td>60</td></tr>
+<tr><td>59</td><td class='status-cell'>〇</td><td>けん★けん@MAYA≫来年から新名「I NOU（アイノー）」</td><td>2595</td><td>59</td></tr>
+<tr><td>58</td><td class='status-cell'>〇</td><td>【無音】Ali。(ありまる)</td><td>2770</td><td>58</td></tr>
+<tr><td>57</td><td class='status-cell'>〇</td><td>㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱</td><td>2792</td><td>57</td></tr>
+<tr><td>56</td><td class='status-cell'>〇</td><td>ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺</td><td>2980</td><td>56</td></tr>
+<tr><td>55</td><td class='status-cell'>〇</td><td>タカ1221 🍎🐛🍑🏹</td><td>2993</td><td>55</td></tr>
+<tr><td>54</td><td class='status-cell'>〇</td><td>だいママ@アクスタ1位🥇*❃感謝❃*⿻💘</td><td>3000</td><td>54</td></tr>
+<tr><td>53</td><td class='status-cell'>〇</td><td>デカ猫🐮🌼</td><td>3000</td><td>53</td></tr>
+<tr><td>52</td><td class='status-cell'>〇</td><td>お仕事中🦷ERI💋 12/8大本命ガチ🔥</td><td>3055</td><td>52</td></tr>
+<tr><td>51</td><td class='status-cell'>〇</td><td>全無ちぇすとなっつ⑦🦌♨️</td><td>3060</td><td>51</td></tr>
+<tr><td>50</td><td class='status-cell'>〇</td><td>레서 판다 Lesser PANDA 🇰🇷</td><td>3085</td><td>50</td></tr>
+<tr><td>49</td><td class='status-cell'>〇</td><td>ナナシ（冬眠しまこっち）🌙🪷🫧</td><td>3120</td><td>49</td></tr>
+<tr><td>48</td><td class='status-cell'>〇</td><td>Ayamin（さん付け禁止）@看護師🐰💉</td><td>3237</td><td>48</td></tr>
+<tr><td>47</td><td class='status-cell'>〇</td><td>🔰ねずみ@ぴょん小屋種族🌸👩‍🎓©︎🐸🔰</td><td>3297</td><td>47</td></tr>
+<tr><td>46</td><td class='status-cell'>〇</td><td>たっかりんちょ@🐾🐰🍰🎤🪸🎵</td><td>3360</td><td>46</td></tr>
+<tr><td>45</td><td class='status-cell'>〇</td><td>ひげっち⚡️えんな海賊団💎🏴‍☠️🍙</td><td>3442</td><td>45</td></tr>
+<tr><td>44</td><td class='status-cell'>〇</td><td>ﾐﾙｸ 🍼🌻)YUHA🎗(多忙中為無反応多め)</td><td>3496</td><td>44</td></tr>
+<tr><td>43</td><td class='status-cell'>〇</td><td>ねいろꕤ酒ガチャのクランド様とコラボ中</td><td>3546</td><td>43</td></tr>
+<tr><td>42</td><td class='status-cell'>〇</td><td>えしまはる🌊✨️</td><td>3595</td><td>42</td></tr>
+<tr><td>41</td><td class='status-cell'>〇</td><td>リンクス☃</td><td>3600</td><td>41</td></tr>
+<tr><td>40</td><td class='status-cell'>〇</td><td>のーちゃん ちゃん (｡・﹃・｡)</td><td>3658</td><td>40</td></tr>
+<tr><td>39</td><td class='status-cell'>〇</td><td>【無】まる</td><td>3670</td><td>39</td></tr>
+<tr><td>38</td><td class='status-cell'>〇</td><td>ユウたんちゃん🌱高村あかり🌻乃咲かおる☃️ユハくん🎗</td><td>3780</td><td>38</td></tr>
+<tr><td>37</td><td class='status-cell'>〇</td><td>バラック@無音投げ逃げかひっそり潜り中</td><td>4080</td><td>37</td></tr>
+<tr><td>36</td><td class='status-cell'>〇</td><td>ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱</td><td>4080</td><td>36</td></tr>
+<tr><td>35</td><td class='status-cell'>〇</td><td>迷い犬</td><td>4155</td><td>35</td></tr>
+<tr><td>34</td><td class='status-cell'>〇</td><td>フリット( *¯ ³¯*)(歩利×2フリフリ)</td><td>4560</td><td>34</td></tr>
+<tr><td>33</td><td class='status-cell'>〇</td><td>ヒマジン</td><td>4739</td><td>33</td></tr>
+<tr><td>32</td><td class='status-cell'>〇</td><td>無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん</td><td>4817</td><td>32</td></tr>
+<tr><td>31</td><td class='status-cell'>〇</td><td>わいわい🧸🌻🎗️⛄</td><td>5379</td><td>31</td></tr>
+<tr><td>30</td><td class='status-cell'>〇</td><td>ゆっぴぃ*</td><td>5832</td><td>30</td></tr>
+<tr><td>29</td><td class='status-cell'>〇</td><td>🧁みーも@MOE🏠 🎗♡🐮🌼</td><td>5878</td><td>29</td></tr>
+<tr><td>28</td><td class='status-cell'>〇</td><td>無反応 MOE</td><td>6068</td><td>28</td></tr>
+<tr><td>27</td><td class='status-cell'>〇</td><td>（仕事中）アイシン@🔱🐒EMILY’s room ΨΨΨ</td><td>6120</td><td>27</td></tr>
+<tr><td>26</td><td class='status-cell'>〇</td><td>ＴＡＫＵＳＡＮ【Mio🍨🌷/吉瀬歩実🐈💭】</td><td>6120</td><td>26</td></tr>
+<tr><td>25</td><td class='status-cell'>〇</td><td>Love@そな🐮🌼TGCイベお疲れ様でした☺️🌿</td><td>6752</td><td>25</td></tr>
+<tr><td>24</td><td class='status-cell'>〇</td><td>(5日まで🐨🇦🇺)さくらんぼっち⚯ 🎗ゆらゆら彡︎✿</td><td>7909</td><td>24</td></tr>
+<tr><td>23</td><td class='status-cell'>〇</td><td>ひろちゃん🐮🌼🎗️</td><td>7924</td><td>23</td></tr>
+<tr><td>22</td><td class='status-cell'>〇</td><td>xs4@🔱EMILY's room ΨΨΨ</td><td>8000</td><td>22</td></tr>
+<tr><td>21</td><td class='status-cell'>〇</td><td>コマイヌチェリー@川口桃乃🐇🍑.</td><td>8214</td><td>21</td></tr>
+<tr><td>20</td><td class='status-cell'>〇</td><td>水香次枠19:30</td><td>8689</td><td>20</td></tr>
+<tr><td>19</td><td class='status-cell'>〇</td><td>アイス大好き🎗️</td><td>10561</td><td>19</td></tr>
+<tr><td>18</td><td class='status-cell'>〇</td><td>KUMA🐻 YUHA🎗</td><td>10886</td><td>18</td></tr>
+<tr><td>17</td><td class='status-cell'>〇</td><td>kokoro🎗️YUHA🎗</td><td>11180</td><td>17</td></tr>
+<tr><td>16</td><td class='status-cell'>〇</td><td>マル(♍@いろは🌺𝒦𝓊𝓇ℴ姫🌺🎗</td><td>11650</td><td>16</td></tr>
+<tr><td>15</td><td class='status-cell'>〇</td><td>🎗 あ 🌷 ず 🐰無音無反応</td><td>11706</td><td>15</td></tr>
+<tr><td>14</td><td class='status-cell'>〇</td><td>hiro☆akashima末吉&大吉25　小24 興23</td><td>12224</td><td>14</td></tr>
+<tr><td>13</td><td class='status-cell'>〇</td><td>たかしゃん🧡🐼⏯️Runaar 18時～♡♡</td><td>14640</td><td>13</td></tr>
+<tr><td>12</td><td class='status-cell'>〇</td><td>ジャックん＠♐️❣️🎗🐠🏀🩵</td><td>16878</td><td>12</td></tr>
+<tr><td>11</td><td class='status-cell'>〇</td><td>❄いなっちくん🎗❄‪</td><td>21725</td><td>11</td></tr>
+<tr><td>10</td><td class='status-cell'>〇</td><td>緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8</td><td>29505</td><td>10</td></tr>
+<tr><td>9</td><td class='status-cell'>〇</td><td>*¨*</td><td>31860</td><td>9</td></tr>
+<tr><td>8</td><td class='status-cell'>〇</td><td>すどっち</td><td>38115</td><td>8</td></tr>
+<tr><td>7</td><td class='status-cell'>〇</td><td>ハムハム ❅YUHA🎗[感謝🙏]</td><td>41261</td><td>7</td></tr>
+<tr><td>6</td><td class='status-cell'>〇</td><td>laid back🎗️</td><td>50903</td><td>6</td></tr>
+<tr><td>5</td><td class='status-cell'>〇</td><td>wanko</td><td>52273</td><td>5</td></tr>
+<tr><td>4</td><td class='status-cell'>〇</td><td>剣(つるぎ）♡いと愛し♡🎗️🦌♨️㊸</td><td>65060</td><td>4</td></tr>
+<tr><td>3</td><td class='status-cell'>〇</td><td>YOSHI🔱EMILY&YUHA🎗コヘミ🌺</td><td>71876</td><td>3</td></tr>
+<tr><td>2</td><td class='status-cell'>〇</td><td>昼🌞)ᘮㄋ@YUHA🎗🔥24〜ガチ</td><td>78696</td><td>2</td></tr>
+<tr><td>1</td><td class='status-cell'>〇</td><td>𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝</td><td>736814</td><td>1</td></tr>
+
+    </tbody>
+    </table>
+  </div>
+
+  <!-- 右側: ポイントランキング -->
+  <div class="column">
+    <h2>ポイントランキング</h2>
+    <div class="button-container">
+      <span class="toggle-btn active" id="btnCurrent" onclick="showRanking('current')">今回</span>
+      <span class="toggle-btn" id="btnPrev" onclick="showRanking('prev')">前回</span>
+    </div>
+
+    <table id="rankingTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable('rankingTable',0)">No</th>
+        <th onclick="sortTable('rankingTable',1)">名前</th>
+        <th onclick="sortTable('rankingTable',2)">ポイント</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr class='current'><td>1</td><td>𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝</td><td>736814</td></tr>
+<tr class='current'><td>2</td><td>昼🌞)ᘮㄋ@YUHA🎗🔥24〜ガチ</td><td>78696</td></tr>
+<tr class='current'><td>3</td><td>YOSHI🔱EMILY&YUHA🎗コヘミ🌺</td><td>71876</td></tr>
+<tr class='current'><td>4</td><td>剣(つるぎ）♡いと愛し♡🎗️🦌♨️㊸</td><td>65060</td></tr>
+<tr class='current'><td>5</td><td>wanko</td><td>52273</td></tr>
+<tr class='current'><td>6</td><td>laid back🎗️</td><td>50903</td></tr>
+<tr class='current'><td>7</td><td>ハムハム ❅YUHA🎗[感謝🙏]</td><td>41261</td></tr>
+<tr class='current'><td>8</td><td>すどっち</td><td>38115</td></tr>
+<tr class='current'><td>9</td><td>*¨*</td><td>31860</td></tr>
+<tr class='current'><td>10</td><td>緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8</td><td>29505</td></tr>
+<tr class='current'><td>11</td><td>❄いなっちくん🎗❄‪</td><td>21725</td></tr>
+<tr class='current'><td>12</td><td>ジャックん＠♐️❣️🎗🐠🏀🩵</td><td>16878</td></tr>
+<tr class='current'><td>13</td><td>たかしゃん🧡🐼⏯️Runaar 18時～♡♡</td><td>14640</td></tr>
+<tr class='current'><td>14</td><td>hiro☆akashima末吉&大吉25　小24 興23</td><td>12224</td></tr>
+<tr class='current'><td>15</td><td>🎗 あ 🌷 ず 🐰無音無反応</td><td>11706</td></tr>
+<tr class='current'><td>16</td><td>マル(♍@いろは🌺𝒦𝓊𝓇ℴ姫🌺🎗</td><td>11650</td></tr>
+<tr class='current'><td>17</td><td>kokoro🎗️YUHA🎗</td><td>11180</td></tr>
+<tr class='current'><td>18</td><td>KUMA🐻 YUHA🎗</td><td>10886</td></tr>
+<tr class='current'><td>19</td><td>アイス大好き🎗️</td><td>10561</td></tr>
+<tr class='current'><td>20</td><td>水香次枠19:30</td><td>8689</td></tr>
+<tr class='current'><td>21</td><td>コマイヌチェリー@川口桃乃🐇🍑.</td><td>8214</td></tr>
+<tr class='current'><td>22</td><td>xs4@🔱EMILY's room ΨΨΨ</td><td>8000</td></tr>
+<tr class='current'><td>23</td><td>ひろちゃん🐮🌼🎗️</td><td>7924</td></tr>
+<tr class='current'><td>24</td><td>(5日まで🐨🇦🇺)さくらんぼっち⚯ 🎗ゆらゆら彡︎✿</td><td>7909</td></tr>
+<tr class='current'><td>25</td><td>Love@そな🐮🌼TGCイベお疲れ様でした☺️🌿</td><td>6752</td></tr>
+<tr class='current'><td>26</td><td>ＴＡＫＵＳＡＮ【Mio🍨🌷/吉瀬歩実🐈💭】</td><td>6120</td></tr>
+<tr class='current'><td>27</td><td>（仕事中）アイシン@🔱🐒EMILY’s room ΨΨΨ</td><td>6120</td></tr>
+<tr class='current'><td>28</td><td>無反応 MOE</td><td>6068</td></tr>
+<tr class='current'><td>29</td><td>🧁みーも@MOE🏠 🎗♡🐮🌼</td><td>5878</td></tr>
+<tr class='current'><td>30</td><td>ゆっぴぃ*</td><td>5832</td></tr>
+<tr class='current'><td>31</td><td>わいわい🧸🌻🎗️⛄</td><td>5379</td></tr>
+<tr class='current'><td>32</td><td>無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん</td><td>4817</td></tr>
+<tr class='current'><td>33</td><td>ヒマジン</td><td>4739</td></tr>
+<tr class='current'><td>34</td><td>フリット( *¯ ³¯*)(歩利×2フリフリ)</td><td>4560</td></tr>
+<tr class='current'><td>35</td><td>迷い犬</td><td>4155</td></tr>
+<tr class='current'><td>36</td><td>ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱</td><td>4080</td></tr>
+<tr class='current'><td>37</td><td>バラック@無音投げ逃げかひっそり潜り中</td><td>4080</td></tr>
+<tr class='current'><td>38</td><td>ユウたんちゃん🌱高村あかり🌻乃咲かおる☃️ユハくん🎗</td><td>3780</td></tr>
+<tr class='current'><td>39</td><td>【無】まる</td><td>3670</td></tr>
+<tr class='current'><td>40</td><td>のーちゃん ちゃん (｡・﹃・｡)</td><td>3658</td></tr>
+<tr class='current'><td>41</td><td>リンクス☃</td><td>3600</td></tr>
+<tr class='current'><td>42</td><td>えしまはる🌊✨️</td><td>3595</td></tr>
+<tr class='current'><td>43</td><td>ねいろꕤ酒ガチャのクランド様とコラボ中</td><td>3546</td></tr>
+<tr class='current'><td>44</td><td>ﾐﾙｸ 🍼🌻)YUHA🎗(多忙中為無反応多め)</td><td>3496</td></tr>
+<tr class='current'><td>45</td><td>ひげっち⚡️えんな海賊団💎🏴‍☠️🍙</td><td>3442</td></tr>
+<tr class='current'><td>46</td><td>たっかりんちょ@🐾🐰🍰🎤🪸🎵</td><td>3360</td></tr>
+<tr class='current'><td>47</td><td>🔰ねずみ@ぴょん小屋種族🌸👩‍🎓©︎🐸🔰</td><td>3297</td></tr>
+<tr class='current'><td>48</td><td>Ayamin（さん付け禁止）@看護師🐰💉</td><td>3237</td></tr>
+<tr class='current'><td>49</td><td>ナナシ（冬眠しまこっち）🌙🪷🫧</td><td>3120</td></tr>
+<tr class='current'><td>50</td><td>레서 판다 Lesser PANDA 🇰🇷</td><td>3085</td></tr>
+<tr class='current'><td>51</td><td>全無ちぇすとなっつ⑦🦌♨️</td><td>3060</td></tr>
+<tr class='current'><td>52</td><td>お仕事中🦷ERI💋 12/8大本命ガチ🔥</td><td>3055</td></tr>
+<tr class='current'><td>53</td><td>デカ猫🐮🌼</td><td>3000</td></tr>
+<tr class='current'><td>54</td><td>だいママ@アクスタ1位🥇*❃感謝❃*⿻💘</td><td>3000</td></tr>
+<tr class='current'><td>55</td><td>タカ1221 🍎🐛🍑🏹</td><td>2993</td></tr>
+<tr class='current'><td>56</td><td>ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺</td><td>2980</td></tr>
+<tr class='current'><td>57</td><td>㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱</td><td>2792</td></tr>
+<tr class='current'><td>58</td><td>【無音】Ali。(ありまる)</td><td>2770</td></tr>
+<tr class='current'><td>59</td><td>けん★けん@MAYA≫来年から新名「I NOU（アイノー）」</td><td>2595</td></tr>
+<tr class='current'><td>60</td><td>しんくんたん【さん付け不要】🎗🖤🐨 Ω</td><td>2515</td></tr>
+<tr class='current'><td>61</td><td>カズ🌸💫</td><td>2500</td></tr>
+<tr class='current'><td>62</td><td>そなち🐮🌼集大成TGCイベ応援感謝♥️</td><td>2311</td></tr>
+<tr class='current'><td>63</td><td>よし🍎🐛</td><td>2304</td></tr>
+<tr class='current'><td>64</td><td>🥰ゆら音</td><td>2304</td></tr>
+<tr class='current'><td>65</td><td>かおるん.*･ﾟ☃️.ﾟ･*.</td><td>2220</td></tr>
+<tr class='current'><td>66</td><td>上田ゆき🐤❄️🐙</td><td>2220</td></tr>
+<tr class='current'><td>67</td><td>🈚️ひろきち</td><td>2160</td></tr>
+<tr class='current'><td>68</td><td>🌎まさと⚡ あやっぴーの応援あざ~ッシタ🙇</td><td>2160</td></tr>
+<tr class='current'><td>69</td><td>しんげつ◢⁴⁶【かえで守護隊⚔️タカ派急先鋒】</td><td>2040</td></tr>
+<tr class='current'><td>70</td><td>たけまる@吉田笑夢💜えむの小悪魔るーむ</td><td>1932</td></tr>
+<tr class='current'><td>71</td><td>🌎キュベレイ⚡</td><td>1920</td></tr>
+<tr class='current'><td>72</td><td>ONEONE@🐈‍⬛💡🐰👒🦖👊︎︎🦕</td><td>1905</td></tr>
+<tr class='current'><td>73</td><td>たいちゅん(+ちゅん)ÅÅÅ/㌧ｾ隊㉖🦌♨️/🐥🌱</td><td>1860</td></tr>
+<tr class='current'><td>74</td><td>トウタイspec0.0</td><td>1836</td></tr>
+<tr class='current'><td>75</td><td>10月21日誕生日🎂浦和とHKTを支え隊</td><td>1800</td></tr>
+<tr class='current'><td>76</td><td>🍑黒柴のリコテン🐥🌱</td><td>1731</td></tr>
+<tr class='current'><td>77</td><td>💐</td><td>1728</td></tr>
+<tr class='current'><td>78</td><td>🙇🏻‍♂️無反応S</td><td>1692</td></tr>
+<tr class='current'><td>79</td><td>カルビちゃん❤️そなち🐮🌼TGCイベ応援感謝😌</td><td>1656</td></tr>
+<tr class='current'><td>80</td><td>さわち👑🎼</td><td>1608</td></tr>
+<tr class='current'><td>81</td><td>🎡蒼穹のニルニール🎡</td><td>1584</td></tr>
+<tr class='current'><td>82</td><td>るぴん</td><td>1584</td></tr>
+<tr class='current'><td>83</td><td>ひでぴ〜 🌻🐠 🐱</td><td>1572</td></tr>
+<tr class='current'><td>84</td><td>tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ</td><td>1560</td></tr>
+<tr class='current'><td>85</td><td>六供音🌻みこるーむ🍓with バラクーダ</td><td>1560</td></tr>
+<tr class='current'><td>86</td><td>J君🍀🍌🍵🌸菜緒の忠犬わんだほー</td><td>1560</td></tr>
+<tr class='current'><td>87</td><td>♦️赤いべべ着た金魚にゃ</td><td>1560</td></tr>
+<tr class='current'><td>88</td><td>ゅん。𝄑𝄑🐶𝄑𝄑</td><td>1550</td></tr>
+<tr class='current'><td>89</td><td>O次郎（オージロウ）</td><td>1548</td></tr>
+<tr class='current'><td>90</td><td>ステラ☆彡</td><td>1500</td></tr>
+<tr class='current'><td>91</td><td>Dracoドラコ</td><td>1464</td></tr>
+<tr class='current'><td>92</td><td>⚠無反応⚠masacoyull←アバタータップしてみてね😊</td><td>1440</td></tr>
+<tr class='current'><td>93</td><td>ㅤㅤㅤㅤㅤㅤボンビーちゃん</td><td>1439</td></tr>
+<tr class='current'><td>94</td><td>むっく٩(๑❛ᴗ❛๑)۶🩷池松美湖</td><td>1438</td></tr>
+<tr class='current'><td>95</td><td>らいでん@こがちゃん</td><td>1380</td></tr>
+<tr class='current'><td>96</td><td>【無音・無反応】みや虎@ゆいな 👀.</td><td>1332</td></tr>
+<tr class='current'><td>97</td><td>🌞かずみぃたん🐹♡안녕!!揚げせん食う？</td><td>1320</td></tr>
+<tr class='current'><td>98</td><td>セロー@みこるーむ🧸🌻</td><td>1320</td></tr>
+<tr class='current'><td>99</td><td>まひる【全無🧎‍♀️】@彩葉ねいろ応援感謝ꕤ︎︎</td><td>1320</td></tr>
+<tr class='current'><td>100</td><td>you-look🐷🍣♥️</td><td>1320</td></tr>
+
+    </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// 汎用テーブルソート関数
+function sortTable(tableId, n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableId);
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            let xContent = isNaN(x.innerHTML) ? x.innerHTML.toLowerCase() : parseFloat(x.innerHTML);
+            let yContent = isNaN(y.innerHTML) ? y.innerHTML.toLowerCase() : parseFloat(y.innerHTML);
+            if (dir == "asc") {
+                if (xContent > yContent) { shouldSwitch = true; break; }
+            } else if (dir == "desc") {
+                if (xContent < yContent) { shouldSwitch = true; break; }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
+        }
+    }
+}
+
+// 今回/前回切替
+var currentRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝,736814
+2,昼🌞)ᘮㄋ@YUHA🎗🔥24〜ガチ,78696
+3,YOSHI🔱EMILY&YUHA🎗コヘミ🌺,71876
+4,剣(つるぎ）♡いと愛し♡🎗️🦌♨️㊸,65060
+5,wanko,52273
+6,laid back🎗️,50903
+7,ハムハム ❅YUHA🎗[感謝🙏],41261
+8,すどっち,38115
+9,*¨*,31860
+10,緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8,29505
+11,❄いなっちくん🎗❄‪,21725
+12,ジャックん＠♐️❣️🎗🐠🏀🩵,16878
+13,たかしゃん🧡🐼⏯️Runaar 18時～♡♡,14640
+14,hiro☆akashima末吉&大吉25　小24 興23,12224
+15,🎗 あ 🌷 ず 🐰無音無反応,11706
+16,マル(♍@いろは🌺𝒦𝓊𝓇ℴ姫🌺🎗,11650
+17,kokoro🎗️YUHA🎗,11180
+18,KUMA🐻 YUHA🎗,10886
+19,アイス大好き🎗️,10561
+20,水香次枠19:30,8689
+21,コマイヌチェリー@川口桃乃🐇🍑.,8214
+22,xs4@🔱EMILY's room ΨΨΨ,8000
+23,ひろちゃん🐮🌼🎗️,7924
+24,(5日まで🐨🇦🇺)さくらんぼっち⚯ 🎗ゆらゆら彡︎✿,7909
+25,Love@そな🐮🌼TGCイベお疲れ様でした☺️🌿,6752
+26,ＴＡＫＵＳＡＮ【Mio🍨🌷/吉瀬歩実🐈💭】,6120
+27,（仕事中）アイシン@🔱🐒EMILY’s room ΨΨΨ,6120
+28,無反応 MOE,6068
+29,🧁みーも@MOE🏠 🎗♡🐮🌼,5878
+30,ゆっぴぃ*,5832
+31,わいわい🧸🌻🎗️⛄,5379
+32,無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん,4817
+33,ヒマジン,4739
+34,フリット( *¯ ³¯*)(歩利×2フリフリ),4560
+35,迷い犬,4155
+36,ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱,4080
+37,バラック@無音投げ逃げかひっそり潜り中,4080
+38,ユウたんちゃん🌱高村あかり🌻乃咲かおる☃️ユハくん🎗,3780
+39,【無】まる,3670
+40,のーちゃん ちゃん (｡・﹃・｡),3658
+41,リンクス☃,3600
+42,えしまはる🌊✨️,3595
+43,ねいろꕤ酒ガチャのクランド様とコラボ中,3546
+44,ﾐﾙｸ 🍼🌻)YUHA🎗(多忙中為無反応多め),3496
+45,ひげっち⚡️えんな海賊団💎🏴‍☠️🍙,3442
+46,たっかりんちょ@🐾🐰🍰🎤🪸🎵,3360
+47,🔰ねずみ@ぴょん小屋種族🌸👩‍🎓©︎🐸🔰,3297
+48,Ayamin（さん付け禁止）@看護師🐰💉,3237
+49,ナナシ（冬眠しまこっち）🌙🪷🫧,3120
+50,레서 판다 Lesser PANDA 🇰🇷,3085
+51,全無ちぇすとなっつ⑦🦌♨️,3060
+52,お仕事中🦷ERI💋 12/8大本命ガチ🔥,3055
+53,デカ猫🐮🌼,3000
+54,だいママ@アクスタ1位🥇*❃感謝❃*⿻💘,3000
+55,タカ1221 🍎🐛🍑🏹,2993
+56,ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺,2980
+57,㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱,2792
+58,【無音】Ali。(ありまる),2770
+59,けん★けん@MAYA≫来年から新名「I NOU（アイノー）」,2595
+60,しんくんたん【さん付け不要】🎗🖤🐨 Ω,2515
+61,カズ🌸💫,2500
+62,そなち🐮🌼集大成TGCイベ応援感謝♥️,2311
+63,よし🍎🐛,2304
+64,🥰ゆら音,2304
+65,かおるん.*･ﾟ☃️.ﾟ･*.,2220
+66,上田ゆき🐤❄️🐙,2220
+67,🈚️ひろきち,2160
+68,🌎まさと⚡ あやっぴーの応援あざ~ッシタ🙇,2160
+69,しんげつ◢⁴⁶【かえで守護隊⚔️タカ派急先鋒】,2040
+70,たけまる@吉田笑夢💜えむの小悪魔るーむ,1932
+71,🌎キュベレイ⚡,1920
+72,ONEONE@🐈‍⬛💡🐰👒🦖👊︎︎🦕,1905
+73,たいちゅん(+ちゅん)ÅÅÅ/㌧ｾ隊㉖🦌♨️/🐥🌱,1860
+74,トウタイspec0.0,1836
+75,10月21日誕生日🎂浦和とHKTを支え隊,1800
+76,🍑黒柴のリコテン🐥🌱,1731
+77,💐,1728
+78,🙇🏻‍♂️無反応S,1692
+79,カルビちゃん❤️そなち🐮🌼TGCイベ応援感謝😌,1656
+80,さわち👑🎼,1608
+81,🎡蒼穹のニルニール🎡,1584
+82,るぴん,1584
+83,ひでぴ〜 🌻🐠 🐱,1572
+84,tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ,1560
+85,六供音🌻みこるーむ🍓with バラクーダ,1560
+86,J君🍀🍌🍵🌸菜緒の忠犬わんだほー,1560
+87,♦️赤いべべ着た金魚にゃ,1560
+88,ゅん。𝄑𝄑🐶𝄑𝄑,1550
+89,O次郎（オージロウ）,1548
+90,ステラ☆彡,1500
+91,Dracoドラコ,1464
+92,⚠無反応⚠masacoyull←アバタータップしてみてね😊,1440
+93,ㅤㅤㅤㅤㅤㅤボンビーちゃん,1439
+94,むっく٩(๑❛ᴗ❛๑)۶🩷池松美湖,1438
+95,らいでん@こがちゃん,1380
+96,【無音・無反応】みや虎@ゆいな 👀.,1332
+97,🌞かずみぃたん🐹♡안녕!!揚げせん食う？,1320
+98,セロー@みこるーむ🧸🌻,1320
+99,まひる【全無🧎‍♀️】@彩葉ねいろ応援感謝ꕤ︎︎,1320
+100,you-look🐷🍣♥️,1320`;
+var prevRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝,736814
+2,昼🌞)ᘮㄋ@YUHA🎗🔥24〜ガチ,78696
+3,YOSHI🔱EMILY&YUHA🎗コヘミ🌺,71876
+4,剣(つるぎ）♡いと愛し♡🎗️🦌♨️㊸,65060
+5,wanko,52273
+6,laid back🎗️,50903
+7,ハムハム ❅YUHA🎗[感謝🙏],41261
+8,すどっち,38115
+9,*¨*,31860
+10,緩緩寝損(緩緩獅子)@み～ちゃん応援隊No.8,29505
+11,❄いなっちくん🎗❄‪,21725
+12,ジャックん＠♐️❣️🎗🐠🏀🩵,16878
+13,たかしゃん🧡🐼⏯️Runaar 18時～♡♡,14640
+14,hiro☆akashima末吉&大吉25　小24 興23,12224
+15,🎗 あ 🌷 ず 🐰無音無反応,11706
+16,マル(♍@いろは🌺𝒦𝓊𝓇ℴ姫🌺🎗,11650
+17,kokoro🎗️YUHA🎗,11180
+18,KUMA🐻 YUHA🎗,10886
+19,アイス大好き🎗️,10561
+20,水香次枠19:30,8689
+21,コマイヌチェリー@川口桃乃🐇🍑.,8214
+22,xs4@🔱EMILY's room ΨΨΨ,8000
+23,ひろちゃん🐮🌼🎗️,7924
+24,(5日まで🐨🇦🇺)さくらんぼっち⚯ 🎗ゆらゆら彡︎✿,7909
+25,Love@そな🐮🌼TGCイベお疲れ様でした☺️🌿,6752
+26,ＴＡＫＵＳＡＮ【Mio🍨🌷/吉瀬歩実🐈💭】,6120
+27,（仕事中）アイシン@🔱🐒EMILY’s room ΨΨΨ,6120
+28,無反応 MOE,6068
+29,🧁みーも@MOE🏠 🎗♡🐮🌼,5878
+30,ゆっぴぃ*,5832
+31,わいわい🧸🌻🎗️⛄,5379
+32,無反応🙏ひまわり🌻🌈🍀@㊗️ふるさと映画祭ひいやん,4817
+33,ヒマジン,4739
+34,フリット( *¯ ³¯*)(歩利×2フリフリ),4560
+35,迷い犬,4155
+36,ラストコール@yanaまる隊🧴🍋🎗️⛑️🥒🐱,4080
+37,バラック@無音投げ逃げかひっそり潜り中,4080
+38,ユウたんちゃん🌱高村あかり🌻乃咲かおる☃️ユハくん🎗,3780
+39,【無】まる,3670
+40,のーちゃん ちゃん (｡・﹃・｡),3658
+41,リンクス☃,3600
+42,えしまはる🌊✨️,3595
+43,ねいろꕤ酒ガチャのクランド様とコラボ中,3546
+44,ﾐﾙｸ 🍼🌻)YUHA🎗(多忙中為無反応多め),3496
+45,ひげっち⚡️えんな海賊団💎🏴‍☠️🍙,3442
+46,たっかりんちょ@🐾🐰🍰🎤🪸🎵,3360
+47,🔰ねずみ@ぴょん小屋種族🌸👩‍🎓©︎🐸🔰,3297
+48,Ayamin（さん付け禁止）@看護師🐰💉,3237
+49,ナナシ（冬眠しまこっち）🌙🪷🫧,3120
+50,레서 판다 Lesser PANDA 🇰🇷,3085
+51,全無ちぇすとなっつ⑦🦌♨️,3060
+52,お仕事中🦷ERI💋 12/8大本命ガチ🔥,3055
+53,デカ猫🐮🌼,3000
+54,だいママ@アクスタ1位🥇*❃感謝❃*⿻💘,3000
+55,タカ1221 🍎🐛🍑🏹,2993
+56,ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺,2980
+57,㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱,2792
+58,【無音】Ali。(ありまる),2770
+59,けん★けん@MAYA≫来年から新名「I NOU（アイノー）」,2595
+60,しんくんたん【さん付け不要】🎗🖤🐨 Ω,2515
+61,カズ🌸💫,2500
+62,そなち🐮🌼集大成TGCイベ応援感謝♥️,2311
+63,よし🍎🐛,2304
+64,🥰ゆら音,2304
+65,かおるん.*･ﾟ☃️.ﾟ･*.,2220
+66,上田ゆき🐤❄️🐙,2220
+67,🈚️ひろきち,2160
+68,🌎まさと⚡ あやっぴーの応援あざ~ッシタ🙇,2160
+69,しんげつ◢⁴⁶【かえで守護隊⚔️タカ派急先鋒】,2040
+70,たけまる@吉田笑夢💜えむの小悪魔るーむ,1932
+71,🌎キュベレイ⚡,1920
+72,ONEONE@🐈‍⬛💡🐰👒🦖👊︎︎🦕,1905
+73,たいちゅん(+ちゅん)ÅÅÅ/㌧ｾ隊㉖🦌♨️/🐥🌱,1860
+74,トウタイspec0.0,1836
+75,10月21日誕生日🎂浦和とHKTを支え隊,1800
+76,🍑黒柴のリコテン🐥🌱,1731
+77,💐,1728
+78,🙇🏻‍♂️無反応S,1692
+79,カルビちゃん❤️そなち🐮🌼TGCイベ応援感謝😌,1656
+80,さわち👑🎼,1608
+81,🎡蒼穹のニルニール🎡,1584
+82,るぴん,1584
+83,ひでぴ〜 🌻🐠 🐱,1572
+84,tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ,1560
+85,六供音🌻みこるーむ🍓with バラクーダ,1560
+86,J君🍀🍌🍵🌸菜緒の忠犬わんだほー,1560
+87,♦️赤いべべ着た金魚にゃ,1560
+88,ゅん。𝄑𝄑🐶𝄑𝄑,1550
+89,O次郎（オージロウ）,1548
+90,ステラ☆彡,1500
+91,Dracoドラコ,1464
+92,⚠無反応⚠masacoyull←アバタータップしてみてね😊,1440
+93,ㅤㅤㅤㅤㅤㅤボンビーちゃん,1439
+94,むっく٩(๑❛ᴗ❛๑)۶🩷池松美湖,1438
+95,らいでん@こがちゃん,1380
+96,【無音・無反応】みや虎@ゆいな 👀.,1332
+97,🌞かずみぃたん🐹♡안녕!!揚げせん食う？,1320
+98,セロー@みこるーむ🧸🌻,1320
+99,まひる【全無🧎‍♀️】@彩葉ねいろ応援感謝ꕤ︎︎,1320
+100,you-look🐷🍣♥️,1320`;
+
+function showRanking(which) {
+    var tbody = document.getElementById('rankingTable').getElementsByTagName('tbody')[0];
+    tbody.innerHTML = '';
+    var data = (which==='current') ? currentRanking : prevRanking;
+    var rows = data.split('\n');
+    for(var i=0;i<rows.length;i++){
+        if(!rows[i]) continue;
+        var cols = rows[i].split(',');
+        var tr = document.createElement('tr');
+        for(var j=0;j<cols.length;j++){
+            var td = document.createElement('td');
+            td.textContent = cols[j];
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+    document.getElementById('btnCurrent').classList.toggle('active', which==='current');
+    document.getElementById('btnPrev').classList.toggle('active', which==='prev');
+}
+</script>
+
+</body>
+</html>
