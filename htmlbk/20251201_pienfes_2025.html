@@ -11,6 +11,7 @@ table { border-collapse: collapse; width: 100%; }
 th, td { border: 1px solid #000; padding: 4px; text-align: left; }
 th { background-color: #eee; cursor: pointer; }
 .status-cell { text-align: center; font-weight: bold; width: 50px; }
+.fr-cell { text-align: center; font-weight: bold; width: 40px; color: red; }
 .button-container { margin-bottom: 10px; }
 .toggle-btn {
     padding: 5px 10px;
@@ -65,38 +66,39 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
       <tr>
         <th onclick="sortTable('reachedTable',0)">No</th>
         <th onclick="sortTable('reachedTable',1)">状態</th>
-        <th onclick="sortTable('reachedTable',2)">名前</th>
-        <th onclick="sortTable('reachedTable',3)">ポイント</th>
-        <th onclick="sortTable('reachedTable',4)">EEUID</th>
+        <th onclick="sortTable('reachedTable',2)">画像済</th>
+        <th onclick="sortTable('reachedTable',3)">名前</th>
+        <th onclick="sortTable('reachedTable',4)">ポイント</th>
+        <th onclick="sortTable('reachedTable',5)">EEUID</th>
       </tr>
     </thead>
     <tbody>
-<tr><td>26</td><td class='status-cell'>〇</td><td>㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱🐒🍎🐛</td><td>1500</td><td>26</td></tr>
-<tr><td>25</td><td class='status-cell'>〇</td><td>ヒマジン</td><td>1958</td><td>25</td></tr>
-<tr><td>24</td><td class='status-cell'>〇</td><td>ねいろꕤ酒ガチャのクランド様とコラボ中</td><td>1679</td><td>24</td></tr>
-<tr><td>23</td><td class='status-cell'>〇</td><td>佳華🤍🫧</td><td>1740</td><td>23</td></tr>
-<tr><td>22</td><td class='status-cell'>〇</td><td>KUMA🐻 YUHA🎗</td><td>2468</td><td>22</td></tr>
-<tr><td>21</td><td class='status-cell'>〇</td><td>kokoro🎗️YUHA🎗</td><td>2617</td><td>21</td></tr>
-<tr><td>20</td><td class='status-cell'>〇</td><td>xs4@🔱EMILY's room ΨΨΨ</td><td>2370</td><td>20</td></tr>
-<tr><td>19</td><td class='status-cell'>〇</td><td>ジャックん＠♐️❣️🎗🐠🏀🩵</td><td>2972</td><td>19</td></tr>
-<tr><td>18</td><td class='status-cell'>〇</td><td>たかしゃん🧡🐼⏯️Runaar18・21時✨8日~ガチ✨</td><td>3420</td><td>18</td></tr>
-<tr><td>17</td><td class='status-cell'>〇</td><td>ひろちゃん🐮🌼🎗️</td><td>4532</td><td>17</td></tr>
-<tr><td>16</td><td class='status-cell'>〇</td><td>【無】まる</td><td>4632</td><td>16</td></tr>
-<tr><td>15</td><td class='status-cell'>〇</td><td>ひげっち⚡️えんな海賊団💎🏴‍☠️🍙</td><td>4680</td><td>15</td></tr>
-<tr><td>14</td><td class='status-cell'>〇</td><td>アイス大好き🎗️</td><td>4962</td><td>14</td></tr>
-<tr><td>13</td><td class='status-cell'>〇</td><td>hiro☆akashima末吉&大吉25　小24 興23</td><td>4964</td><td>13</td></tr>
-<tr><td>12</td><td class='status-cell'>〇</td><td>레서 판다 Lesser PANDA 🇰🇷</td><td>5038</td><td>12</td></tr>
-<tr><td>11</td><td class='status-cell'>〇</td><td>🎗 あ 🌷 ず 🐰無音無反応</td><td>11880</td><td>11</td></tr>
-<tr><td>10</td><td class='status-cell'>〇</td><td>ハムハム ❅YUHA🎗[感謝🙏]</td><td>9679</td><td>10</td></tr>
-<tr><td>9</td><td class='status-cell'>〇</td><td>laid back🎗️</td><td>11958</td><td>9</td></tr>
-<tr><td>8</td><td class='status-cell'>〇</td><td>すどっち</td><td>13614</td><td>8</td></tr>
-<tr><td>7</td><td class='status-cell'>〇</td><td>❄いなっちくん🎗❄‪</td><td>19019</td><td>7</td></tr>
-<tr><td>6</td><td class='status-cell'>〇</td><td>YOSHI🔱EMILY&YUHA🎗コヘミ🌺</td><td>22904</td><td>6</td></tr>
-<tr><td>5</td><td class='status-cell'>〇</td><td>wanko</td><td>32587</td><td>5</td></tr>
-<tr><td>4</td><td class='status-cell'>〇</td><td>バラック@無音投げ逃げかひっそり潜り中</td><td>57630</td><td>4</td></tr>
-<tr><td>3</td><td class='status-cell'>〇</td><td>剣(つるぎ）♡いと愛し♡たなまゆガチ中🎗️🦌♨️㊸</td><td>67320</td><td>3</td></tr>
-<tr><td>2</td><td class='status-cell'>〇</td><td>昼🌞)ᘮㄋ@YUHA🎗🔥ぴえん集め</td><td>86938</td><td>2</td></tr>
-<tr><td>1</td><td class='status-cell'>〇</td><td>𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝</td><td>316510</td><td>1</td></tr>
+<tr><td>26</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>㋓㋸ちゃん@🎗️🌻🌈🍀︎🔱🐒🍎🐛</td><td>1500</td><td>26</td></tr>
+<tr><td>25</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ヒマジン</td><td>1958</td><td>25</td></tr>
+<tr><td>24</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ねいろꕤ酒ガチャのクランド様とコラボ中</td><td>1679</td><td>24</td></tr>
+<tr><td>23</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>佳華🤍🫧</td><td>1740</td><td>23</td></tr>
+<tr><td>22</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>KUMA🐻 YUHA🎗</td><td>2468</td><td>22</td></tr>
+<tr><td>21</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>kokoro🎗️YUHA🎗</td><td>2617</td><td>21</td></tr>
+<tr><td>20</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>xs4@🔱EMILY's room ΨΨΨ</td><td>2370</td><td>20</td></tr>
+<tr><td>19</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ジャックん＠♐️❣️🎗🐠🏀🩵</td><td>2972</td><td>19</td></tr>
+<tr><td>18</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>たかしゃん🧡🐼⏯️Runaar18・21時✨8日~ガチ✨</td><td>3420</td><td>18</td></tr>
+<tr><td>17</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ひろちゃん🐮🌼🎗️</td><td>4532</td><td>17</td></tr>
+<tr><td>16</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>【無】まる</td><td>4632</td><td>16</td></tr>
+<tr><td>15</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ひげっち⚡️えんな海賊団💎🏴‍☠️🍙</td><td>4680</td><td>15</td></tr>
+<tr><td>14</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>アイス大好き🎗️</td><td>4962</td><td>14</td></tr>
+<tr><td>13</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>hiro☆akashima末吉&大吉25　小24 興23</td><td>4964</td><td>13</td></tr>
+<tr><td>12</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>레서 판다 Lesser PANDA 🇰🇷</td><td>5038</td><td>12</td></tr>
+<tr><td>11</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>🎗 あ 🌷 ず 🐰無音無反応</td><td>11880</td><td>11</td></tr>
+<tr><td>10</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ハムハム ❅YUHA🎗[感謝🙏]</td><td>9679</td><td>10</td></tr>
+<tr><td>9</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>laid back🎗️</td><td>11958</td><td>9</td></tr>
+<tr><td>8</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>すどっち</td><td>13614</td><td>8</td></tr>
+<tr><td>7</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>❄いなっちくん🎗❄‪</td><td>19019</td><td>7</td></tr>
+<tr><td>6</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>YOSHI🔱EMILY&YUHA🎗コヘミ🌺</td><td>22904</td><td>6</td></tr>
+<tr><td>5</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>wanko</td><td>32587</td><td>5</td></tr>
+<tr><td>4</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>バラック@無音投げ逃げかひっそり潜り中</td><td>57630</td><td>4</td></tr>
+<tr><td>3</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>剣(つるぎ）♡いと愛し♡たなまゆガチ中🎗️🦌♨️㊸</td><td>67320</td><td>3</td></tr>
+<tr><td>2</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>昼🌞)ᘮㄋ@YUHA🎗🔥ぴえん集め</td><td>86938</td><td>2</td></tr>
+<tr><td>1</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝</td><td>316510</td><td>1</td></tr>
 
     </tbody>
     </table>
@@ -208,7 +210,7 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 <tr class='current'><td>87</td><td>たずたろう⑤🐠🦀♔まりりん</td><td>360</td></tr>
 <tr class='current'><td>88</td><td>カルガモ＠えんなしゃん💀MIYAT💜miya💚</td><td>360</td></tr>
 <tr class='current'><td>89</td><td>かずみぃたん‪🐹♡</td><td>360</td></tr>
-<tr class='current'><td>90</td><td>EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰</td><td>360</td></tr>
+<tr class='current'><td>90</td><td>運転中🚗 ³₃EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰</td><td>360</td></tr>
 <tr class='current'><td>91</td><td>🕊️けいちゃん@そなち🐮🌼</td><td>360</td></tr>
 <tr class='current'><td>92</td><td>ゆう🌈🔨声優_百合野凛子</td><td>360</td></tr>
 <tr class='current'><td>93</td><td>(無)ドラガリノロー@みこるーむ・池松美湖</td><td>360</td></tr>
@@ -371,7 +373,7 @@ var currentRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング�
 87,たずたろう⑤🐠🦀♔まりりん,360
 88,カルガモ＠えんなしゃん💀MIYAT💜miya💚,360
 89,かずみぃたん‪🐹♡,360
-90,EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,360
+90,運転中🚗 ³₃EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,360
 91,🕊️けいちゃん@そなち🐮🌼,360
 92,ゆう🌈🔨声優_百合野凛子,360
 93,(無)ドラガリノロー@みこるーむ・池松美湖,360
@@ -439,8 +441,8 @@ var prevRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準�
 55,💕ティアラ𓂃𓈒𓏸︎︎︎︎👑@たくたくの秘書✨Aひ〜,718
 56,カルビちゃん❤️そなち🐮🌼TGCイベ応援感謝😌,718
 57,(外出中)ふーりん🔱❄️🐒EMILY‘s roomΨ,660
-58,ひでぴ〜 🌻🐠 🐱,600
-59,Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️,600
+58,Ellsworth⚡️えんな海賊団 指揮官💎🏴‍☠️,600
+59,ひでぴ〜 🌻🐠 🐱,600
 60,ピカちゃん,600
 61,🈚️ひろきち,600
 62,よし🍎🐛,600
@@ -471,7 +473,7 @@ var prevRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準�
 87,たずたろう⑤🐠🦀♔まりりん,360
 88,カルガモ＠えんなしゃん💀MIYAT💜miya💚,360
 89,かずみぃたん‪🐹♡,360
-90,EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,360
+90,運転中🚗 ³₃EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰,360
 91,🕊️けいちゃん@そなち🐮🌼,360
 92,ゆう🌈🔨声優_百合野凛子,360
 93,(無)ドラガリノロー@みこるーむ・池松美湖,360
