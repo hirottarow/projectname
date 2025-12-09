@@ -3,6 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <title>到達メンバー & ポイントランキング</title>
+<script src="backups.js"></script>
 <style>
 body { font-family: sans-serif; margin: 0; padding: 0; }
 .container { display: flex; gap: 20px; padding: 10px; }
@@ -47,8 +48,6 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 <div class="backup-selector">
     <select id="backupFileSelector" onchange="navigateToBackup()">
         <option value="">-- 過去のイベント --</option>
-<option value="htmlbk/20251201_pienfes_2025.html">20251201_pienfes_2025.html</option>
-<option value="htmlbk/20251124_amatsukamusic2.html">20251124_amatsukamusic2.html</option>
     </select>
 </div>
 </header>
@@ -234,27 +233,40 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 
 <script>
 // バックアップファイルへのナビゲーション
+
+// バックアップファイルリストの初期化（JSから読み込み）
+document.addEventListener('DOMContentLoaded', function() {
+    var selector = document.getElementById('backupFileSelector');
+    if (typeof window.BACKUP_FILES !== 'undefined') {
+        window.BACKUP_FILES.forEach(function(file) {
+            var option = document.createElement('option');
+            // file は "htmlbk/filename.html" の形式を想定
+            option.value = file;
+            option.textContent = file.split('/').pop(); // ファイル名のみ表示
+            if (window.location.pathname.endsWith(file.split('/').pop())) {
+                option.selected = true;
+            }
+            selector.appendChild(option);
+        });
+    }
+});
+
+// バックアップファイルへのナビゲーション
 function navigateToBackup() {
     var selector = document.getElementById('backupFileSelector');
     var selectedFile = selector.value;
     if (selectedFile) {
-        // 現在のパスが htmlbk を含んでいるか簡易チェック
         var path = window.location.pathname;
-        if (path.includes("htmlbk") || path.includes("reached_and_ranking_")) {
-             // htmlbkフォルダ内にいると仮定 (ファイル名規則による)
-             // selectedFile は "htmlbk/filename.html" の形式で渡ってくる想定
-             // なので、 "../" + selectedFile でルートに戻ってからアクセスするか、
-             // 単に同じフォルダにあるなら "filename.html" だけでいい
-             
-             // selectedFile からファイル名だけ抽出
-             var fname = selectedFile.split('/').pop();
-             window.location.href = fname;
+        var inHtmlBk = path.includes("htmlbk") || path.includes("_"); 
+        
+        if (inHtmlBk) {
+             window.location.href = selectedFile;
         } else {
-            // ルートにいる場合
-            window.location.href = selectedFile;
+            window.location.href = "htmlbk/" + selectedFile;
         }
     }
 }
+
 
 // 汎用テーブルソート関数
 function sortTable(tableId, n) {

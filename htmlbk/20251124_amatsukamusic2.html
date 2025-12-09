@@ -3,6 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <title>到達メンバー & ポイントランキング</title>
+<script src="backups.js"></script>
 <style>
 body { font-family: sans-serif; margin: 0; padding: 0; }
 .container { display: flex; gap: 20px; padding: 10px; }
@@ -24,12 +25,34 @@ header { padding: 10px; background:#333; color:#fff; text-align:center; }
 header h1 { margin:0; font-size:1.5em; }
 header h2 { margin:5px 0 0 0; font-size:1.2em; }
 header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
+
+.backup-selector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.backup-selector select {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
 </style>
 </head>
 <body>
 
 <header>
 <h2>KONAMI音ゲー・歌手など実績多数！Amatsukaによる楽曲提供イベント！</h2>
+
+<div class="backup-selector">
+    <select id="backupFileSelector" onchange="navigateToBackup()">
+        <option value="">-- 過去のイベント --</option>
+    </select>
+</div>
+
 </header>
 
 <div class="container">
@@ -474,6 +497,40 @@ var prevRanking = `1,𝓡𝓮𝓷のママ🎗️ユハアップカミング準�
 98,セロー@みこるーむ🧸🌻,1320
 99,まひる【全無🧎‍♀️】@彩葉ねいろ応援感謝ꕤ︎︎,1320
 100,you-look🐷🍣♥️,1320`;
+
+
+// バックアップファイルリストの初期化（JSから読み込み）
+document.addEventListener('DOMContentLoaded', function() {
+    var selector = document.getElementById('backupFileSelector');
+    if (typeof window.BACKUP_FILES !== 'undefined') {
+        window.BACKUP_FILES.forEach(function(file) {
+            var option = document.createElement('option');
+            // file は "htmlbk/filename.html" の形式を想定
+            option.value = file;
+            option.textContent = file.split('/').pop(); // ファイル名のみ表示
+            if (window.location.pathname.endsWith(file.split('/').pop())) {
+                option.selected = true;
+            }
+            selector.appendChild(option);
+        });
+    }
+});
+
+// バックアップファイルへのナビゲーション
+function navigateToBackup() {
+    var selector = document.getElementById('backupFileSelector');
+    var selectedFile = selector.value;
+    if (selectedFile) {
+        var path = window.location.pathname;
+        var inHtmlBk = path.includes("htmlbk") || path.includes("_"); 
+        
+        if (inHtmlBk) {
+             window.location.href = selectedFile;
+        } else {
+            window.location.href = "htmlbk/" + selectedFile;
+        }
+    }
+}
 
 function showRanking(which) {
     var tbody = document.getElementById('rankingTable').getElementsByTagName('tbody')[0];

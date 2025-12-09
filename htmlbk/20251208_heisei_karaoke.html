@@ -3,6 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <title>到達メンバー & ポイントランキング</title>
+<script src="backups.js"></script>
 <style>
 body { font-family: sans-serif; margin: 0; padding: 0; }
 .container { display: flex; gap: 20px; padding: 10px; }
@@ -47,9 +48,6 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 <div class="backup-selector">
     <select id="backupFileSelector" onchange="navigateToBackup()">
         <option value="">-- 過去のイベント --</option>
-<option value="htmlbk/20251208_heisei_karaoke.html">20251208_heisei_karaoke.html</option>
-<option value="htmlbk/20251201_pienfes_2025.html">20251201_pienfes_2025.html</option>
-<option value="htmlbk/20251124_amatsukamusic2.html">20251124_amatsukamusic2.html</option>
     </select>
 </div>
 </header>
@@ -74,13 +72,6 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
       </tr>
     </thead>
     <tbody>
-<tr><td>7</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>laid back🎗️</td><td>1620</td><td>7</td></tr>
-<tr><td>6</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>ﾐﾙｸ 🍼🌻)YUHA🎗(多忙中為無反応多め)</td><td>1740</td><td>6</td></tr>
-<tr><td>5</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>夜🐈‍⬛🌙)ᘮㄋ@YUHA🎗</td><td>2040</td><td>5</td></tr>
-<tr><td>4</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>wanko</td><td>2136</td><td>4</td></tr>
-<tr><td>3</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>剣(つるぎ）♡いと愛し♡🎗️🦌♨️㊸</td><td>3240</td><td>3</td></tr>
-<tr><td>2</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>すどっち</td><td>8040</td><td>2</td></tr>
-<tr><td>1</td><td class='status-cell'>〇</td><td class='fr-cell'>✕</td><td>𝓡𝓮𝓷のママ🎗️ユハアップカミング準決勝</td><td>15492</td><td>1</td></tr>
 
     </tbody>
     </table>
@@ -211,25 +202,45 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 </div>
 
 <script>
+// バックアップファイルリストの初期化（JSから読み込み）
+document.addEventListener('DOMContentLoaded', function() {
+    var selector = document.getElementById('backupFileSelector');
+    if (typeof window.BACKUP_FILES !== 'undefined') {
+        window.BACKUP_FILES.forEach(function(file) {
+            var option = document.createElement('option');
+            // file は "htmlbk/filename.html" の形式を想定
+            option.value = file;
+            option.textContent = file.split('/').pop(); // ファイル名のみ表示
+            selector.appendChild(option);
+        });
+    }
+});
+
 // バックアップファイルへのナビゲーション
 function navigateToBackup() {
     var selector = document.getElementById('backupFileSelector');
     var selectedFile = selector.value;
     if (selectedFile) {
-        // 現在のパスが htmlbk を含んでいるか簡易チェック
+        // 現在のパスが htmlbk を含んでいるか
         var path = window.location.pathname;
-        if (path.includes("htmlbk") || path.includes("reached_and_ranking_")) {
-             // htmlbkフォルダ内にいると仮定 (ファイル名規則による)
-             // selectedFile は "htmlbk/filename.html" の形式で渡ってくる想定
-             // なので、 "../" + selectedFile でルートに戻ってからアクセスするか、
-             // 単に同じフォルダにあるなら "filename.html" だけでいい
-             
-             // selectedFile からファイル名だけ抽出
-             var fname = selectedFile.split('/').pop();
-             window.location.href = fname;
+        var inHtmlBk = path.includes("htmlbk") || path.includes("_"); // 簡易判定: サブフォルダ内なら
+        
+        // selectedFile は "htmlbk/xxx.html" または "xxx.html" (update_backups_jsの実装に依存)
+        // ここでは update_backups_js が "filename.html" だけを返すか、"htmlbk/filename.html" を返すかで分岐
+        
+        // 統一: BACKUP_FILES には "htmlbk/filename.html" という相対パスが入っていると仮定
+        // rootから見るならそのまま。htmlbk内から見るなら "../" が必要？
+        // いや、シンプルにファイル名だけ入れておいて、遷移ロジックで吸収する方がいいかも。
+        
+        // ★今回は update_backups_js で「ファイル名のみ」を格納することにします。
+        
+        if (inHtmlBk) {
+             // 既に htmlbk フォルダ内にいる場合 -> 同じフォルダのファイルへ
+             // selectedFile が "filename.html" ならそのまま
+             window.location.href = selectedFile;
         } else {
-            // ルートにいる場合
-            window.location.href = selectedFile;
+            // ルートにいる場合 -> htmlbk/filename.html へ
+            window.location.href = "htmlbk/" + selectedFile;
         }
     }
 }
