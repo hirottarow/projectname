@@ -260,13 +260,21 @@ function navigateToBackup() {
         
         // ★今回は update_backups_js で「ファイル名のみ」を格納することにします。
         
-        if (inHtmlBk) {
-             // 既に htmlbk フォルダ内にいる場合 -> 同じフォルダのファイルへ
-             // selectedFile が "filename.html" ならそのまま
+        // 修正: 確実に htmlbk フォルダ内かどうかを判定し、遷移先を決める
+        
+        // 現在のURLが "htmlbk/" を含んでいるか、または "htmlbk" フォルダ内のファイルか
+        // ファイル名が backups.js のある場所と同じなら、それは htmlbk 内。
+        // しかし backups.js は相対パスで読んでいるだけかもしれない。
+        
+        // 単純に現在のパスを確認
+        if (location.pathname.indexOf("/htmlbk/") !== -1) {
+             // 既に htmlbk 内にいるなら、ファイル名だけでOK
              window.location.href = selectedFile;
         } else {
-            // ルートにいる場合 -> htmlbk/filename.html へ
-            window.location.href = "htmlbk/" + selectedFile;
+             // ルートにいるなら、htmlbk/ を付ける
+             // ただし、もし既に "htmlbk/" が付いていないおかしな状態のファイル（ルートにある過去ログ）から飛ぼうとしている場合でも
+             // htmlbk/ を付ければ正しい場所（htmlbkフォルダ）に行けるはず。
+             window.location.href = "htmlbk/" + selectedFile;
         }
     }
 }
