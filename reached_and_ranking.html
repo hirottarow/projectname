@@ -3,7 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <title>到達メンバー & ポイントランキング</title>
-<script src="htmlbk/backups.js?v=1767105596"></script>
+<script src="htmlbk/backups.js?v=1767107647"></script>
 <style>
 body { font-family: sans-serif; margin: 0; padding: 0; }
 .container { display: flex; gap: 20px; padding: 10px; }
@@ -206,12 +206,25 @@ header p { margin:2px 0 0 0; font-size:1em; color:#ccc; }
 // バックアップファイルリストの初期化（JSから読み込み）
 document.addEventListener('DOMContentLoaded', function() {
     var selector = document.getElementById('backupFileSelector');
+    if (!selector) return;
+
+    // 既存のリストをクリア
+    selector.innerHTML = '<option value="">-- 過去のイベント --</option>';
+
     if (typeof window.BACKUP_FILES !== 'undefined') {
         window.BACKUP_FILES.forEach(function(file) {
             var option = document.createElement('option');
             // file は "htmlbk/filename.html" の形式を想定
             option.value = file;
             option.textContent = file.split('/').pop(); // ファイル名のみ表示
+            
+            // 現在のファイルを選択状態にする
+            var currentFile = window.location.pathname.split('/').pop();
+            try { currentFile = decodeURIComponent(currentFile); } catch(e) {}
+            
+            if (file.endsWith(currentFile)) {
+                option.selected = true;
+            }
             selector.appendChild(option);
         });
     }

@@ -3,7 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <title>到達メンバー & ポイントランキング</title>
-<script src="backups.js"></script>
+<script src="backups.js?v=1767107527"></script>
 <style>
 body { font-family: sans-serif; margin: 0; padding: 0; }
 .container { display: flex; gap: 20px; padding: 10px; }
@@ -445,5 +445,48 @@ function showRanking(which) {
 }
 </script>
 
+<script>
+
+// バックアップファイルリストの初期化（JSから読み込み・修正版）
+document.addEventListener('DOMContentLoaded', function() {
+    var selector = document.getElementById('backupFileSelector');
+    if (!selector) return;
+    
+    // 既存のリストをクリアして再構築（重複防止 & 最新ロジック適用）
+    selector.innerHTML = '<option value="">-- 過去のイベント --</option>';
+    
+    if (typeof window.BACKUP_FILES !== 'undefined') {
+        window.BACKUP_FILES.forEach(function(file) {
+            var option = document.createElement('option');
+            option.value = file;
+            option.textContent = file.split('/').pop(); 
+            
+            // 現在のファイルを選択状態にする
+            var currentFile = window.location.pathname.split('/').pop();
+            try { currentFile = decodeURIComponent(currentFile); } catch(e) {}
+            
+            if (file.endsWith(currentFile)) {
+                option.selected = true;
+            }
+            selector.appendChild(option);
+        });
+    }
+});
+
+// バックアップファイルへのナビゲーション（上書き）
+window.navigateToBackup = function() {
+    var selector = document.getElementById('backupFileSelector');
+    var selectedFile = selector.value;
+    if (selectedFile) {
+        var target = selectedFile.split('/').pop();
+        if (location.pathname.indexOf("/htmlbk/") !== -1) {
+             window.location.href = target;
+        } else {
+             window.location.href = "htmlbk/" + target;
+        }
+    }
+};
+
+</script>
 </body>
 </html>
