@@ -1,1 +1,1 @@
-window.BACKUP_FILES = ["20251229_weekday_start_012.html", "20251222_sr_xmas2025.html", "20251222_liver_support_sr10.html", "20251215_tocobo_lipoil.html", "20251208_heisei_karaoke.html", "20251201_pienfes_2025.html", "20251124_amatsukamusic2.html"];
+window.BACKUP_FILES = ["20260105_drink_19.html", "20251229_weekday_start_012.html", "20251222_sr_xmas2025.html", "20251222_liver_support_sr10.html", "20251215_tocobo_lipoil.html", "20251208_heisei_karaoke.html", "20251201_pienfes_2025.html", "20251124_amatsukamusic2.html"];
