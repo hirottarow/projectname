@@ -1,5 +1,9 @@
 {
   "_comment": "設定ガイド: 'gachi' = 3000pt (ガチイベント / 🔥), 'yurutto' = 1500pt (ゆるっとイベント / 🍵)",
+  "movie_cast": {
+    "type": "gachi",
+    "date": "2026-01-12"
+  },
   "darumafes2026": {
     "type": "yurutto",
     "date": "2026-01-05"
@@ -12,6 +16,14 @@
     "type": "yurutto",
     "date": "2025-12-22"
   },
+  "liver_support_sr10": {
+    "type": "gachi",
+    "date": "2025-12-22"
+  },
+  "tocobo_lipoil": {
+    "type": "gachi",
+    "date": "2025-12-15"
+  },
   "heisei_karaoke": {
     "type": "yurutto",
     "date": "2025-12-08"
@@ -20,44 +32,56 @@
     "type": "yurutto",
     "date": "2025-12-01"
   },
-  "conveyor_belt_sushi": {
+  "amatsukamusic2": {
     "type": "gachi",
+    "date": "2025-11-24"
+  },
+  "conveyor_belt_sushi": {
+    "type": "yurutto",
     "date": "2025-11-17"
   },
   "moviegiftcard2026": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-11-10"
+  },
+  "kawaii_is_justice26": {
+    "type": "gachi",
+    "date": "2025-11-03"
   },
   "photobook_s_h": {
     "type": "gachi",
     "date": "2025-10-27"
   },
   "misosoup_event": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-10-20"
   },
   "kabuki2025": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-10-13"
   },
   "mattari_fireworks249": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-10-06"
   },
   "sunday_night_011": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-10-05"
   },
-  "sunday_night_010": {
+  "adaptive_2025_ver17": {
     "type": "gachi",
+    "date": "2025-09-29"
+  },
+  "sunday_night_010": {
+    "type": "yurutto",
     "date": "2025-09-28"
   },
   "mattari_fireworks246": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-09-15"
   },
   "sunday_night_008": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-09-14"
   },
   "qabhistory1": {
@@ -81,43 +105,59 @@
     "date": "2025-07-07"
   },
   "kawaii_is_justice12": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-06-30"
+  },
+  "adaptive_2025_ver7": {
+    "type": "gachi",
+    "date": "2025-06-23"
   },
   "akasakaart1": {
     "type": "gachi",
     "date": "2025-06-16"
   },
   "dear_listener_sr51": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-06-09"
+  },
+  "ebishrimpebishrimpebishrimp": {
+    "type": "gachi",
+    "date": "2025-06-02"
   },
   "adaptive_2025_ver4": {
     "type": "gachi",
     "date": "2025-05-26"
   },
   "cherryhenter_sr": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-05-19"
   },
   "gold_movie": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-05-12"
+  },
+  "freely8": {
+    "type": "gachi",
+    "date": "2025-05-05"
   },
   "photo_jiwaruchan": {
     "type": "gachi",
     "date": "2025-04-28"
   },
   "kawaii_is_justice6": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-04-21"
   },
   "musicdorama33ruuhappylucky": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2025-04-07"
   },
-  "sakura_daisuki": {
+  "sukima_cinema2": {
     "type": "gachi",
+    "date": "2025-03-31"
+  },
+  "sakura_daisuki": {
+    "type": "yurutto",
     "date": "2025-03-24"
   },
   "1minutevoice7": {
@@ -132,6 +172,10 @@
     "type": "gachi",
     "date": "2025-03-03"
   },
+  "taisho1": {
+    "type": "gachi",
+    "date": "2025-02-24"
+  },
   "ichikami1": {
     "type": "gachi",
     "date": "2025-02-17"
@@ -140,6 +184,10 @@
     "type": "gachi",
     "date": "2025-02-10"
   },
+  "horrorchanneljapan2025": {
+    "type": "gachi",
+    "date": "2025-02-03"
+  },
   "kawaii_is_justice3": {
     "type": "gachi",
     "date": "2025-01-27"
@@ -147,6 +195,10 @@
   "kamiyashoukai": {
     "type": "gachi",
     "date": "2025-01-20"
+  },
+  "paxy_dorama": {
+    "type": "gachi",
+    "date": "2025-01-13"
   },
   "mug04": {
     "type": "gachi",
@@ -176,6 +228,10 @@
     "type": "gachi",
     "date": "2024-11-11"
   },
+  "sry-dress": {
+    "type": "gachi",
+    "date": "2024-11-04"
+  },
   "samoyedmoffu": {
     "type": "gachi",
     "date": "2024-10-28"
@@ -183,6 +239,10 @@
   "freely": {
     "type": "gachi",
     "date": "2024-10-07"
+  },
+  "taiwandrama": {
+    "type": "gachi",
+    "date": "2024-09-30"
   },
   "regains_model": {
     "type": "gachi",
@@ -193,7 +253,7 @@
     "date": "2024-09-16"
   },
   "ganbaru13": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-09-09"
   },
   "202409maruruillust_": {
@@ -204,6 +264,10 @@
     "type": "gachi",
     "date": "2024-08-19"
   },
+  "safaripark_showroom": {
+    "type": "gachi",
+    "date": "2024-08-12"
+  },
   "richto_cmaudition": {
     "type": "gachi",
     "date": "2024-08-05"
@@ -213,35 +277,47 @@
     "date": "2024-07-29"
   },
   "dear_listener_delivery_sr45": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-07-15"
   },
   "listenerupupup_showroom189": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-07-11"
+  },
+  "tbirun8_1": {
+    "type": "gachi",
+    "date": "2024-06-24"
   },
   "bottling_event": {
     "type": "gachi",
     "date": "2024-06-17"
   },
   "mattari_fireworks180": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-06-10"
   },
   "wallpaper_2406": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-06-03"
+  },
+  "listenerupupup_showroom183": {
+    "type": "gachi",
+    "date": "2024-05-30"
   },
   "chaglip": {
     "type": "gachi",
     "date": "2024-05-23"
   },
   "wallpaper_2405": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-05-13"
   },
-  "original_socks10": {
+  "dear_listener_delivery_sr43": {
     "type": "gachi",
+    "date": "2024-05-06"
+  },
+  "original_socks10": {
+    "type": "yurutto",
     "date": "2024-04-29"
   },
   "beatnixs20240526_runway": {
@@ -249,23 +325,31 @@
     "date": "2024-04-22"
   },
   "dear_listener_care_sr38": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-04-15"
   },
   "kanamorikorea1": {
     "type": "gachi",
     "date": "2024-04-08"
   },
+  "fakeweek2024": {
+    "type": "gachi",
+    "date": "2024-04-01"
+  },
   "bis_2024_1": {
     "type": "gachi",
     "date": "2024-03-25"
   },
   "listenerupupup_showroom173": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-03-21"
   },
-  "dear_listener_travel40": {
+  "wineredbear-pierce": {
     "type": "gachi",
+    "date": "2024-03-11"
+  },
+  "dear_listener_travel40": {
+    "type": "yurutto",
     "date": "2024-03-04"
   },
   "choi": {
@@ -273,59 +357,75 @@
     "date": "2024-02-26"
   },
   "valentine2024": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-02-12"
   },
   "namba_hatch_2024_3": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-02-12"
   },
   "mattari_fireworks161": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-01-29"
   },
   "aisare_king_queen": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-01-22"
   },
   "fukuliver_2024": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-01-08"
   },
   "happynewyear2024": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2024-01-01"
   },
   "christmas2023": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2023-12-18"
   },
   "showgold_get2023": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2023-12-11"
   },
-  "listenerupupup_showroom157": {
+  "tokyo_kimono2024_final": {
     "type": "gachi",
+    "date": "2023-12-04"
+  },
+  "listenerupupup_showroom157": {
+    "type": "yurutto",
     "date": "2023-11-30"
   },
   "tokyo_kimono2024_semi": {
     "type": "gachi",
     "date": "2023-11-20"
   },
-  "listenerupupup_showroom154": {
+  "listenerupupup_showroom155": {
     "type": "gachi",
+    "date": "2023-11-16"
+  },
+  "listenerupupup_showroom154": {
+    "type": "yurutto",
     "date": "2023-11-09"
   },
   "wallpaper_2311": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2023-10-30"
+  },
+  "daisougen_w_kusa_5": {
+    "type": "gachi",
+    "date": "2023-10-16"
   },
   "tokyo_kimono2024_2nda": {
     "type": "gachi",
     "date": "2023-10-09"
   },
   "tokyo_kimono2024_1sta": {
-    "type": "gachi",
+    "type": "yurutto",
     "date": "2023-09-25"
+  },
+  "tokyo_kimono2024_starta": {
+    "type": "gachi",
+    "date": "2023-09-20"
   }
 }

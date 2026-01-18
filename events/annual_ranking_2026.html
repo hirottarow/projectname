@@ -8,11 +8,48 @@
             <style>
                 body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: #f4f7f6; color: #333; padding: 20px; }
                 h1 { text-align: center; color: #2c3e50; margin: 0; }
-                .container { max-width: 1000px; margin: 0 auto; overflow-x: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; }
+                
+                /* Container handles horizontal scroll only. Vertical scroll is on body. */
+                .container { 
+                    max-width: 1000px; 
+                    margin: 0 auto; 
+                    background: white; 
+                    padding: 20px; 
+                    border-radius: 8px; 
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+                    overflow-x: auto; 
+                }
+                
                 table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; white-space: nowrap; }
                 th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #ddd; border-right: 1px solid #ccc; }
+                
+                /* Sticky Header (Vertical Scroll) */
+                thead tr th {
+                    position: sticky;
+                    top: 0;
+                    background-color: #eef; /* Opaque background */
+                    z-index: 20;
+                    border-bottom: 2px solid #888;
+                }
+                
+                /* Sticky Name Column (Horizontal Scroll) */
+                th:first-child, td:first-child {
+                    position: sticky;
+                    left: 0;
+                    background-color: #fff; /* Opaque background */
+                    z-index: 10;
+                    border-right: 2px solid #bbb;
+                }
+                
+                /* Intersection (Top-Left) needs highest Z-index */
+                thead tr th:first-child {
+                    z-index: 30;
+                    background-color: #eef;
+                }
+
                 th:last-child, td:last-child { border-right: none; }
-                tr:hover { background-color: #f1f1f1; }
+                tr:hover td { background-color: #f1f1f1; }
+                
                 .medal-gold { color: #d4af37; }
                 .medal-silver { color: #a0a0a0; }
                 .medal-bronze { color: #cd7f32; }
@@ -28,7 +65,7 @@
             const table = document.querySelector('table');
             const container = document.querySelector('.container');
             const toggleBtn = document.getElementById('toggleRowsBtn');
-            const achievers = new Set(["🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ", "YOSHI🔱EMILY&YUHA12～ガチ🎗️コヘミ🌺", "剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸", "すどっち", "昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜", "wanko🎗️", "ハムハム ❅YUHA🎗(12日~ガチイベ🔥)", "ジェイ@じわるちゃん🍿⌒︎*⭐️初代クリエイター王❣️👑", "リンクス☃", "アイス大好き🎗️ユハ12日からガチ♥", "ひげっち⚡️えんな海賊団💎🏴‍☠️🍙", "【無】まる", "ひろちゃん🐮🌼🎗️", "jun猛爆💠お千花れさまroom💠", "hiro☆akashima吉26 小&大25　　小吉24 ", "❄いなっちくん🎗❄‪ ", "タカ1221 🍎🐛🍑🏹", "🎗 あ 🌷 ず 🐰無音🤭", "マル(♍@いろは🌺𝒦𝓊𝓇ℴ姫🌺🎗", "ちぇこ@平田龍人君🍜🐉🍓Annnnna🌈まりぃ～✌", "*¨*", "たかしゃん🧡🐼⏯️Runaar 18・21時🐼✨", "xs4@🔱EMILY's room ΨΨΨ", "KUMA🐻 YUHA🎗", "🔰ねずみ@ぴょん小屋種族🌸👩‍🎓🦵©︎🐸🔰", "ジャックん＠🎗🐠🏀🩵🐰🌧️🦔🌸", "kokoro🎗️YUHA🎗", "Unsubscribed User", "カズ🌸💫    ", "(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機", "にちはむファン", "全無ゆら音(ぴんから姉妹応援中)", "ヒマジン ", "無かおるん.*･ﾟ☃️.ﾟ･*.", "さくらんぼっち⚯ 🎗ゆらゆら彡︎✿", "㋓㋸ちゃん🎗🌻🌈🍀︎ 🔱🍎🐛ユハ12日~ガチ", "ﾐﾙｸ 🍼   🌻   YUHA🎗ガチイベ中です", "tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ", "バラック@無音投げ逃げかひっそり潜り中"]); 
+            const achievers = new Set(["🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ", "昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜", "wanko🎗️", "剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸", "YOSHI🔱EMILY&YUHA🎗️コヘミ🌺", "たかしゃん🧡🐼⏯️Runaar 🐼✨", "ハムハム ❅YUHA🎗(12日~ガチイベ🔥)", "バラック@無音投げ逃げかひっそり潜り中", "❄いなっちくん🎗❄‪ ", "さくらんぼっち⚯ 🎗ゆらゆら彡︎✿", "すどっち", "jun猛爆💠お千花れさまroom💠", "あやみん（さん付け禁止）@看護師🐰💉", "アイス大好き🎗️ユハ12日からガチ♥", "   のーちゃん  ちゃん  (｡・﹃・｡)", "ジャックん＠🎗🐠🏀🩵🐰🌧️🦔🌸", "🧁みーも@MOE🏠   🎗♡🐮🌼", "ゆら音(ぴんから姉妹応援中おまえらーず)", "無反応 MOE", "🎗 あ 🌷 ず 🐰", "xs4@🔱EMILY's room ΨΨΨ", "ドゥラーフ、YUHA応援ルームアミ応援ルーム、", "⠀ ", "ひろちゃん🐮🌼🎗️", "hiro☆akashima吉26 小&大25　　小吉24 ", "ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺", "ＴＡＫＵＳＡＮ@Mio🍨🌷/吉瀬歩実", "にちはむファン", "水香次枠19時半 舞台DVD発売中", "KUMA🐻 YUHA🎗", "(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機", "kokoro🎗️YUHA🎗", "ひでぴ〜 🌻🐠  🐱　", "マル(♍@いろは🌺𝒦𝓊𝓇ℴ姫🌺🎗", "カズ🌸💫    ", "タカシ5150🧸💎ちかちぃ💕amar🐺2", "通りすがりのグレ子🌈❤️", "せりな(бвб)◢⁴⁶ 19日〜ガチイベ❤️‍🔥", "わいわい🧸🌻🎗️⛄", "コマイヌチェリー@川口桃乃🐇🍑.", "【無】まる", "*¨*", "無かおるん.*･ﾟ☃️.ﾟ･*.", "ﾐﾙｸ 🍼   🌻   YUHA🎗ガチイベ中です", "リスナー活動停止中", "😴🦷ERI💋", "@ねいろꕤฅ^•ω•^ฅ", "ひげっち⚡️えんな海賊団💎🏴‍☠️🍙", "佳華🤍🫧bisガチ最終日🐝💕"]); 
             let isShowingAll = false;
 
             // --- Row Filtering ---
@@ -58,6 +95,8 @@
                     }
                 });
             }
+
+
 
             // --- Drag to Scroll ---
             let isDown = false;
@@ -162,6 +201,24 @@
                 z-index: 30;
                 background-color: #eef;
             }
+            
+
+
+            /* Mobile Responsive Adjustments */
+            @media (max-width: 600px) {
+                .container { padding: 10px; overflow-x: scroll; }
+                th, td { padding: 8px 5px; font-size: 0.9em; }
+                h1 { font-size: 1.2em; }
+                .nav-link { font-size: 1em; }
+                
+                /* Adjust sticky Name column */
+                th:first-child, td:first-child {
+                    min-width: 80px; /* Reduced from 150px */
+                    max-width: 100px;
+                    font-size: 0.85em;
+                    white-space: normal; /* Allow wrapping if needed */
+                }
+            }
         </style>
         
         </head>
@@ -172,7 +229,7 @@
                     <h1>🏆 2026年 メダル獲得ランキング</h1>
                     <div class="nav-link"></div>
                 </div>
-                <div class="update-time">更新: 2026-01-18 01:30</div>
+                <div class="update-time">更新: 2026-01-18 23:26</div>
                 
         <div class="legend" style="background: #eef; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <h3>アイコン・記号の説明</h3>
@@ -185,17 +242,17 @@
     <tr>
       <td></td>
       <td></td>
-      <td>🍵</td>
+      <td>🔥</td>
     </tr>
     <tr>
       <td>data</td>
       <td></td>
-      <td><a href="list_2026_01_05_darumafes2026.html" target="_blank" style="text-decoration:none;">&#x1F4C2;</a></td>
+      <td><a href="list_2026_01_12_movie_cast.html" target="_blank" style="text-decoration:none;">&#x1F4C2;</a></td>
     </tr>
     <tr>
       <td>HP</td>
       <td></td>
-      <td><a href="https://www.showroom-live.com/event/contribution/darumafes2026?room_id=490133" target="_blank" style="text-decoration:none;">🔗</a></td>
+      <td><a href="https://www.showroom-live.com/event/contribution/movie_cast?room_id=490133" target="_blank" style="text-decoration:none;">🔗</a></td>
     </tr><tr class="header-labels"><th>name</th><th>年鑑合計</th><th>1月</th></tr></thead><tbody>
     <tr>
       <td>🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ</td>
@@ -203,12 +260,47 @@
       <td>👑</td>
     </tr>
     <tr>
-      <td>YOSHI🔱EMILY&YUHA12～ガチ🎗️コヘミ🌺</td>
+      <td>昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜</td>
+      <td>👑1</td>
+      <td>👑</td>
+    </tr>
+    <tr>
+      <td>wanko🎗️</td>
+      <td>👑1</td>
+      <td>👑</td>
+    </tr>
+    <tr>
+      <td>剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸</td>
+      <td>👑1</td>
+      <td>👑</td>
+    </tr>
+    <tr>
+      <td>YOSHI🔱EMILY&YUHA🎗️コヘミ🌺</td>
       <td>📸1</td>
       <td>📸</td>
     </tr>
     <tr>
-      <td>剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸</td>
+      <td>たかしゃん🧡🐼⏯️Runaar 🐼✨</td>
+      <td>📸1</td>
+      <td>📸</td>
+    </tr>
+    <tr>
+      <td>ハムハム ❅YUHA🎗(12日~ガチイベ🔥)</td>
+      <td>📸1</td>
+      <td>📸</td>
+    </tr>
+    <tr>
+      <td>バラック@無音投げ逃げかひっそり潜り中</td>
+      <td>📸1</td>
+      <td>📸</td>
+    </tr>
+    <tr>
+      <td>❄いなっちくん🎗❄‪</td>
+      <td>📸1</td>
+      <td>📸</td>
+    </tr>
+    <tr>
+      <td>さくらんぼっち⚯ 🎗ゆらゆら彡︎✿</td>
       <td>📸1</td>
       <td>📸</td>
     </tr>
@@ -218,72 +310,112 @@
       <td>📸</td>
     </tr>
     <tr>
-      <td>昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜</td>
+      <td>jun猛爆💠お千花れさまroom💠</td>
       <td>📸1</td>
       <td>📸</td>
     </tr>
     <tr>
-      <td>wanko🎗️</td>
-      <td>🎨1</td>
-      <td>🎨</td>
-    </tr>
-    <tr>
-      <td>ハムハム ❅YUHA🎗(12日~ガチイベ🔥)</td>
-      <td>🎨1</td>
-      <td>🎨</td>
-    </tr>
-    <tr>
-      <td>ジェイ@じわるちゃん🍿⌒︎*⭐️初代クリエイター王❣️👑</td>
-      <td>🎨1</td>
-      <td>🎨</td>
-    </tr>
-    <tr>
-      <td>リンクス☃</td>
-      <td>🎨1</td>
-      <td>🎨</td>
+      <td>あやみん（さん付け禁止）@看護師🐰💉</td>
+      <td>📸1</td>
+      <td>📸</td>
     </tr>
     <tr>
       <td>アイス大好き🎗️ユハ12日からガチ♥</td>
+      <td>📸1</td>
+      <td>📸</td>
+    </tr>
+    <tr>
+      <td>のーちゃん  ちゃん  (｡・﹃・｡)</td>
+      <td>📸1</td>
+      <td>📸</td>
+    </tr>
+    <tr>
+      <td>ジャックん＠🎗🐠🏀🩵🐰🌧️🦔🌸</td>
       <td>🎨1</td>
       <td>🎨</td>
     </tr>
     <tr>
-      <td>ひげっち⚡️えんな海賊団💎🏴‍☠️🍙</td>
-      <td>✅️1</td>
-      <td>✅️</td>
+      <td>🧁みーも@MOE🏠   🎗♡🐮🌼</td>
+      <td>🎨1</td>
+      <td>🎨</td>
     </tr>
     <tr>
-      <td>【無】まる</td>
-      <td>✅️1</td>
-      <td>✅️</td>
+      <td>ゆら音(ぴんから姉妹応援中おまえらーず)</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>無反応 MOE</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>🎗 あ 🌷 ず 🐰</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>xs4@🔱EMILY's room ΨΨΨ</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>ドゥラーフ、YUHA応援ルームアミ応援ルーム、</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>⠀</td>
+      <td>🎨1</td>
+      <td>🎨</td>
     </tr>
     <tr>
       <td>ひろちゃん🐮🌼🎗️</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>jun猛爆💠お千花れさまroom💠</td>
-      <td>✅️1</td>
-      <td>✅️</td>
+      <td>🎨1</td>
+      <td>🎨</td>
     </tr>
     <tr>
       <td>hiro☆akashima吉26 小&大25　　小吉24</td>
-      <td>✅️1</td>
-      <td>✅️</td>
+      <td>🎨1</td>
+      <td>🎨</td>
     </tr>
     <tr>
-      <td>❄いなっちくん🎗❄‪</td>
-      <td>✅️1</td>
-      <td>✅️</td>
+      <td>ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺</td>
+      <td>🎨1</td>
+      <td>🎨</td>
     </tr>
     <tr>
-      <td>タカ1221 🍎🐛🍑🏹</td>
-      <td>✅️1</td>
-      <td>✅️</td>
+      <td>ＴＡＫＵＳＡＮ@Mio🍨🌷/吉瀬歩実</td>
+      <td>🎨1</td>
+      <td>🎨</td>
     </tr>
     <tr>
-      <td>🎗 あ 🌷 ず 🐰無音🤭</td>
+      <td>にちはむファン</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>水香次枠19時半 舞台DVD発売中</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>KUMA🐻 YUHA🎗</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>kokoro🎗️YUHA🎗</td>
+      <td>🎨1</td>
+      <td>🎨</td>
+    </tr>
+    <tr>
+      <td>ひでぴ〜 🌻🐠  🐱</td>
       <td>✅️1</td>
       <td>✅️</td>
     </tr>
@@ -293,7 +425,37 @@
       <td>✅️</td>
     </tr>
     <tr>
-      <td>ちぇこ@平田龍人君🍜🐉🍓Annnnna🌈まりぃ～✌</td>
+      <td>カズ🌸💫</td>
+      <td>✅️1</td>
+      <td>✅️</td>
+    </tr>
+    <tr>
+      <td>タカシ5150🧸💎ちかちぃ💕amar🐺2</td>
+      <td>✅️1</td>
+      <td>✅️</td>
+    </tr>
+    <tr>
+      <td>通りすがりのグレ子🌈❤️</td>
+      <td>✅️1</td>
+      <td>✅️</td>
+    </tr>
+    <tr>
+      <td>せりな(бвб)◢⁴⁶ 19日〜ガチイベ❤️‍🔥</td>
+      <td>✅️1</td>
+      <td>✅️</td>
+    </tr>
+    <tr>
+      <td>わいわい🧸🌻🎗️⛄</td>
+      <td>✅️1</td>
+      <td>✅️</td>
+    </tr>
+    <tr>
+      <td>コマイヌチェリー@川口桃乃🐇🍑.</td>
+      <td>✅️1</td>
+      <td>✅️</td>
+    </tr>
+    <tr>
+      <td>【無】まる</td>
       <td>✅️1</td>
       <td>✅️</td>
     </tr>
@@ -303,77 +465,7 @@
       <td>✅️</td>
     </tr>
     <tr>
-      <td>たかしゃん🧡🐼⏯️Runaar 18・21時🐼✨</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>xs4@🔱EMILY's room ΨΨΨ</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>KUMA🐻 YUHA🎗</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>🔰ねずみ@ぴょん小屋種族🌸👩‍🎓🦵©︎🐸🔰</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>ジャックん＠🎗🐠🏀🩵🐰🌧️🦔🌸</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>kokoro🎗️YUHA🎗</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>Unsubscribed User</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>カズ🌸💫</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>(無音投逃)ゆきかぜ＠🗼⛲Ⓡズコー隊三番機</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>にちはむファン</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>全無ゆら音(ぴんから姉妹応援中)</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>ヒマジン</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
       <td>無かおるん.*･ﾟ☃️.ﾟ･*.</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>さくらんぼっち⚯ 🎗ゆらゆら彡︎✿</td>
-      <td>✅️1</td>
-      <td>✅️</td>
-    </tr>
-    <tr>
-      <td>㋓㋸ちゃん🎗🌻🌈🍀︎ 🔱🍎🐛ユハ12日~ガチ</td>
       <td>✅️1</td>
       <td>✅️</td>
     </tr>
@@ -383,42 +475,32 @@
       <td>✅️</td>
     </tr>
     <tr>
-      <td>tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ</td>
+      <td>リスナー活動停止中</td>
       <td>✅️1</td>
       <td>✅️</td>
     </tr>
     <tr>
-      <td>バラック@無音投げ逃げかひっそり潜り中</td>
+      <td>😴🦷ERI💋</td>
       <td>✅️1</td>
       <td>✅️</td>
-    </tr>
-    <tr>
-      <td>佳華🤍🫧bisガチ🐝💕13:50/21:50</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ズッキー@ねね🍋💎フォロワー募集中!!</td>
-      <td></td>
-      <td>＿</td>
     </tr>
     <tr>
       <td>@ねいろꕤฅ^•ω•^ฅ</td>
-      <td></td>
-      <td>＿</td>
+      <td>✅️1</td>
+      <td>✅️</td>
     </tr>
     <tr>
-      <td>六供音🌻みこるーむ🍓with バラクーダ</td>
-      <td></td>
-      <td>＿</td>
+      <td>ひげっち⚡️えんな海賊団💎🏴‍☠️🍙</td>
+      <td>✅️1</td>
+      <td>✅️</td>
     </tr>
     <tr>
-      <td>むっく٩(๑❛ᴗ❛๑)۶🩷池松美湖</td>
-      <td></td>
-      <td>＿</td>
+      <td>佳華🤍🫧bisガチ最終日🐝💕</td>
+      <td>✅️1</td>
+      <td>✅️</td>
     </tr>
     <tr>
-      <td>しんげつ◢⁴⁶【かえで守護隊⚔️タカ派急先鋒】</td>
+      <td>ユウたんちゃん🌱乃咲かおる☃️ユハくん🎗</td>
       <td></td>
       <td>＿</td>
     </tr>
@@ -428,47 +510,17 @@
       <td>＿</td>
     </tr>
     <tr>
-      <td>トウタイspec0.0</td>
+      <td>タカ1221 🍎🐛🍑🏹</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>ユウたんちゃん🌱乃咲かおる☃️ユハくん🎗</td>
+      <td>ヒマジン</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>新島道太🐔💙</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ONE×2🐰👒🐈‍⬛💡🍎☕️🦖👊☁🎈</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ストッパーあべﾁｬﾝ🎗🎗☁🎶👠🌏🤤🧸🌷🌺</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>けん★けん@ I NOU（アイノー）※MAYAから改名</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>さわち👑🎼</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>you-look🐷🍣♥️</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ひなたの父さん🌲🧘‍♀️</td>
+      <td>モーニング牛乳🐮🥛＠佳華🤍🫧</td>
       <td></td>
       <td>＿</td>
     </tr>
@@ -478,87 +530,32 @@
       <td>＿</td>
     </tr>
     <tr>
-      <td>わんにゃん(^^)</td>
+      <td>フリット( *¯ ³¯*)(歩利×2フリフリ)</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>🍑黒柴のリコテン🐥🌱</td>
+      <td>laid back🎗️</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>ゆうぱぴ🐣@🐁🐰👀.優衣奈＆🐙🌻🌈🍀ひぃ</td>
+      <td>ちぇすとなっつ⑦🦌♨️</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>ゆっぴぃ*</td>
+      <td>リンクス☃</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>オレ（基本無音中🙏）</td>
+      <td>🌎キュベレイ⚡</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>ピカちゃん</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>🈚️ひろきち</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>のらぎつね🦊@追悼名波翼🌠I NOU🌸白狐みやび☪️</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ひでぴ〜 🌻🐠  🐱</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>【】かむっP☺︎【旧姓：かむにい】</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>EMILY🔱Ψ( ⁎ᵕᴗᵕ⁎ )Ψ🐒🐰</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>T (ティー)@こがちゃん</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>popo🐥🤍</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ゅん。𝄑𝄑🐶𝄑𝄑</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>Katsumi</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>上田ゆき🐤❄️🐙</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>るぴん</td>
+      <td>みやちゃんᕗ㋮</td>
       <td></td>
       <td>＿</td>
     </tr>
@@ -568,42 +565,77 @@
       <td>＿</td>
     </tr>
     <tr>
+      <td>るぴん</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>☀️kisara🌙🎼🕊️</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
       <td>Dracoドラコ</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>カルガモ＠えんなしゃん💀MIYAT💜miya💚</td>
+      <td>Stalagスタラグ</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>のーちゃん  ちゃん  (｡・﹃・｡)</td>
+      <td>コヘミぴ🌀🌺2026年も仲良くしてね</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>たあ</td>
+      <td>なおちゃ@ꕀ🍚🐮*🌟🌊ꕀ</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>ハゲおやじ（あい子、1/19ハワイアンズイベ）@きんぺた</td>
+      <td>けん★けん@ I NOU（アイノー）※MAYAから改名</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>なべちゃ🐥🌱</td>
+      <td>ゆっぴぃ*</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>こがちゃん🐴あけおめ🌅ことよろ🎍</td>
+      <td>you-look🐷🍣♥️</td>
       <td></td>
       <td>＿</td>
     </tr>
     <tr>
-      <td>セロー@みこるーむ🧸🌻</td>
+      <td>まさと  あやポチとまさみさんアバイベ</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>💕ティアラ𓂃𓈒𓏸︎︎︎︎👑1月🎂 ✨</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>ひなたの父さん🌲🧘‍♀️</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>千花@2.21🗼ワンマンlive</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>六供音🌻みこるーむ🍓with バラクーダ</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>しんげつ◢⁴⁶【かえで守護隊⚔️タカ派急先鋒】</td>
       <td></td>
       <td>＿</td>
     </tr>
@@ -613,7 +645,97 @@
       <td>＿</td>
     </tr>
     <tr>
-      <td>(無)ドラガリノロー@みこるーむ・池松美湖</td>
+      <td>tooru‪ ஐ‬⋆*@ ꕤ彩葉ねいろꕤ</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>まひる【全無🧎‍♀️】@彩葉ねいろTamTamイベ中ꕤ︎</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>もやっと(ﾟヘﾟ)ด้้้้้็็ ㊽🦌♨️</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>やま</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>梅ちゃん(Haruo Umeki)</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>こがちゃん🐴あけおめ🌅ことよろ🎍</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>かえで🍎🐛女優応援感謝😭</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>クルミン🍉🐬水香</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>さわち👑🎼</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>仕事中アメシスト</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>よし🍎🐛</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>トウタイspec0.0</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>🍑黒柴のリコテン🐥🌱</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>ゅん。𝄑𝄑🐶𝄑𝄑</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>チェルシー👑🎼💃🎶</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>Ao-aO@真莉子🧜‍♀️</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>10度20度30度⤴︎ビバ愚か@ましろん🍼🍚応援感謝</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>ふーりん🔱❄️🐒EMILY‘s roomΨ</td>
+      <td></td>
+      <td>＿</td>
+    </tr>
+    <tr>
+      <td>👸きゅんまん（桶🐝）💃🌸</td>
       <td></td>
       <td>＿</td>
     </tr>
@@ -628,72 +750,7 @@
       <td>＿</td>
     </tr>
     <tr>
-      <td>☀️kisara🌙🎼🕊️</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ハッシー</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>こうたろう</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ちぇすとなっつ⑦🦌♨️</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>Yしゃん🍎🐛🐢👑🫧🪼🩵🎀🌼🎗️</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ろい⚓えんな海賊団💎🏴‍☠️</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>🙇🏻‍♂️無反応S</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>Wah gwaan</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>しゃば～に@じわるちゃん🍿⌒︎*</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>🪭ととパチ【 もぐりん ✌︎(Ⲻⲻ Ⲻ✧) 】</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>みやちゃんᕗ㋮</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>🌈けい☆彡  SNOOPYのお家🐼🌈</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>《無音》福耳のニート®＠村本組 MIYAT⭕あこ～ず⭕</td>
-      <td></td>
-      <td>＿</td>
-    </tr>
-    <tr>
-      <td>ドゥラーフ、YUHA応援ルームアミ応援ルーム、</td>
+      <td>ピカちゃん</td>
       <td></td>
       <td>＿</td>
     </tr>

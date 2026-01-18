@@ -1,0 +1,370 @@
+
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>2026年 特殊特典管理</title>
+        <style>
+            body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: #fce4ec; color: #333; padding: 20px; }
+            h1 { text-align: center; color: #c2185b; }
+            .container { max-width: 1100px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            
+            /* Sticky Legend Bar */
+            .legend-bar {
+                position: sticky;
+                top: 0;
+                z-index: 2000; /* Highest priority */
+                background-color: #fce4ec;
+                border-bottom: 2px solid #c2185b;
+                padding: 10px 5px;
+                text-align: center;
+                font-weight: bold;
+                color: #880e4f;
+                font-size: 0.85em;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            .legend-item { white-space: nowrap; margin: 2px 4px; }
+            
+            /* Remove overflow from container to let sticky headers work with body scroll */
+            .container { max-width: 1100px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            
+            table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 0; }
+            th, td { padding: 8px; text-align: center; border-bottom: 1px solid #eee; }
+            
+            /* Sticky Header (Below Legend) */
+            th { 
+                background-color: #f8bbd0; 
+                color: #880e4f; 
+                position: sticky; 
+                top: 45px; /* Adjust based on typical legend height */
+                z-index: 1000; 
+                border-bottom: 2px solid #ad1457;
+                font-size: 0.9em;
+            }
+            
+            /* Sticky Name Column */
+            th:first-child, td.name-col {
+                position: sticky;
+                left: 0;
+                z-index: 1050; /* Above normal cells, below legend */
+                border-right: 2px solid #eee;
+            }
+            /* Header Name Cell needs higher z-index to stay above body rows */
+            th:first-child {
+                z-index: 1100;
+            }
+            
+            td.name-col { 
+                text-align: left; 
+                font-weight: bold; 
+                min-width: 100px; 
+                background-color: #fff; /* Opaque background */
+            }
+            
+            /* User Separation */
+            tr.user-start-row td {
+                border-top: 3px solid #880e4f;
+            }
+            
+            /* Checkbox Styles */
+            .cb-cell { cursor: pointer; }
+            input[type="checkbox"] { 
+                transform: scale(1.5); 
+                cursor: pointer; 
+                accent-color: #e91e63;
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Status */
+            .status-msg { text-align: right; font-size: 0.8em; color: #888; margin-top: 5px; min-height: 1.2em; }
+            
+            @media (max-width: 600px) {
+                body { padding: 5px; }
+                .container { padding: 5px; }
+                /* On mobile, let simple table scroll happen, but we want name sticky. */
+                th, td { padding: 10px 2px; font-size: 0.8em; }
+                input[type="checkbox"] { transform: scale(1.2); }
+                
+                /* Adjust top for header because legend might wrap */
+                .legend-bar { position: sticky; top: 0; padding: 5px; }
+                th { top: 60px; } 
+                
+                /* Ensure name col is visible */
+                td.name-col { min-width: 80px; font-size: 0.75em; }
+            }
+        </style>
+        <script>
+            // GAS API Configuration
+            const API_URL = "https://script.google.com/macros/s/AKfycbwDYIPoWIj_rPHvMeQKirmLsf8FfsvbP9WPi5Zq8Yk02ll-uTH40F19SV2sPUr1IZLy/exec"; 
+
+            document.addEventListener('DOMContentLoaded', () => {
+                // Load saved data
+                if(API_URL && API_URL.startsWith("http")) {
+                    fetch(API_URL)
+                        .then(r => r.json())
+                        .then(allData => {
+                            console.log("Loaded data:", allData);
+                            // Apply to checkboxes
+                            // data format expected: { "UserName": { "EventKey_Num": true, ... } }
+                            for (const [user, checks] of Object.entries(allData)) {
+                                if (!checks) continue;
+                                for (const [key, isChecked] of Object.entries(checks)) {
+                                    if(isChecked) {
+                                        const lastUnder = key.lastIndexOf('_');
+                                        if(lastUnder > 0) {
+                                            const eKey = key.substring(0, lastUnder);
+                                            const num = key.substring(lastUnder + 1);
+                                            
+                                            // Escape selectors for JS template literal inside Python f-string
+
+                                            const cb = document.querySelector(`input[data-user="${user}"][data-event="${eKey}"][data-num="${num}"]`);
+                                            if(cb) cb.checked = true;
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .catch(e => console.error("Load Error:", e));
+                }
+
+                // Change Handler
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        const user = e.target.dataset.user;
+                        const eventKey = e.target.dataset.event;
+                        const num = e.target.dataset.num;
+                        const isChecked = e.target.checked;
+                        
+                        // Limit Check: Max 2 per event/user
+                        if (isChecked) {
+                            const groupSelector = `input[data-user="${user}"][data-event="${eventKey}"]:checked`;
+                            const checkedCount = document.querySelectorAll(groupSelector).length;
+                            
+                            if (checkedCount > 2) {
+                                e.target.checked = false; // Revert
+                                alert("特典は1つのイベントにつき2つまでです。");
+                                return; // Stop saving
+                            }
+                        }
+                        
+                        saveData(user, num, isChecked, eventKey);
+                    });
+                });
+            });
+
+            let saveQueue = [];
+            let isSaving = false;
+
+            function saveData(user, num, isChecked, eventKey) {
+                if(!API_URL || !API_URL.startsWith("http")) return;
+                
+                const updateKey = `${eventKey}_${num}`;
+                const payload = {
+                    user: user,
+                    update: { [updateKey]: isChecked }
+                };
+                
+                // Add to queue
+                saveQueue.push(payload);
+                processQueue();
+            }
+            
+            function processQueue() {
+                if (isSaving || saveQueue.length === 0) return;
+                
+                isSaving = true;
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = `Saving... (Queue: ${saveQueue.length})`;
+                
+                const payload = saveQueue.shift(); // Get next item
+                
+                fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                })
+                .then(r => {
+                    // Success
+                    if (saveQueue.length === 0) {
+                        statusEl.innerText = "Saved";
+                        setTimeout(() => statusEl.innerText = "", 2000);
+                    } else {
+                         // Continue processing immediately
+                         // statusEl text will update on next loop
+                    }
+                })
+                .catch(e => {
+                    console.error(e);
+                    statusEl.innerText = "Error! Retrying...";
+                    // Optional: Put it back in queue? Or just log error.
+                    // For now, let's just log and move on to prevent blocking.
+                })
+                .finally(() => {
+                    isSaving = false;
+                    if (saveQueue.length > 0) {
+                        processQueue();
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>👑 2026年 特殊特典管理</h1>
+            <div id="status" class="status-msg"></div>
+            <!-- Sticky Legend Bar -->
+            <div class="legend-bar">
+                <span class="legend-item">①🍩手作り</span>
+                <span class="legend-item">②🎙️ボイス</span>
+                <span class="legend-item">③📷写真</span>
+                <span class="legend-item">④🎨イラスト</span>
+                <span class="legend-item">⑤👕アバター</span>
+                <span class="legend-item">⑥🎫抽選券</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Event</th>
+                        <th><div style="font-size:1.5em;">🍩</div>1</th>
+                        <th><div style="font-size:1.5em;">🎙️</div>2</th>
+                        <th><div style="font-size:1.5em;">📷</div>3</th>
+                        <th><div style="font-size:1.5em;">🎨</div>4</th>
+                        <th><div style="font-size:1.5em;">👕</div>5</th>
+                        <th><div style="font-size:1.5em;">🎫</div>6</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">超豪華俳優陣と共演！！全国ロードショー映画キャストオーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_cast" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_cast" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_cast" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_cast" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_cast" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_cast" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">超豪華俳優陣と共演！！全国ロードショー映画キャストオーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="movie_cast" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="movie_cast" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="movie_cast" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="movie_cast" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="movie_cast" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="movie_cast" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">wanko🎗️<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">超豪華俳優陣と共演！！全国ロードショー映画キャストオーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="movie_cast" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="movie_cast" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="movie_cast" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="movie_cast" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="movie_cast" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="movie_cast" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">超豪華俳優陣と共演！！全国ロードショー映画キャストオーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="movie_cast" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="movie_cast" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="movie_cast" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="movie_cast" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="movie_cast" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="movie_cast" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                </tbody>
+            </table>
+        </div>
+    </body>
+    </html>
+    

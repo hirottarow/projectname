@@ -1,0 +1,1593 @@
+
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>2025年 特殊特典管理</title>
+        <style>
+            body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: #fce4ec; color: #333; padding: 20px; }
+            h1 { text-align: center; color: #c2185b; }
+            .container { max-width: 1100px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            
+            /* Sticky Legend Bar */
+            .legend-bar {
+                position: sticky;
+                top: 0;
+                z-index: 2000; /* Highest priority */
+                background-color: #fce4ec;
+                border-bottom: 2px solid #c2185b;
+                padding: 10px 5px;
+                text-align: center;
+                font-weight: bold;
+                color: #880e4f;
+                font-size: 0.85em;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            .legend-item { white-space: nowrap; margin: 2px 4px; }
+            
+            /* Remove overflow from container to let sticky headers work with body scroll */
+            .container { max-width: 1100px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            
+            table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 0; }
+            th, td { padding: 8px; text-align: center; border-bottom: 1px solid #eee; }
+            
+            /* Sticky Header (Below Legend) */
+            th { 
+                background-color: #f8bbd0; 
+                color: #880e4f; 
+                position: sticky; 
+                top: 45px; /* Adjust based on typical legend height */
+                z-index: 1000; 
+                border-bottom: 2px solid #ad1457;
+                font-size: 0.9em;
+            }
+            
+            /* Sticky Name Column */
+            th:first-child, td.name-col {
+                position: sticky;
+                left: 0;
+                z-index: 1050; /* Above normal cells, below legend */
+                border-right: 2px solid #eee;
+            }
+            /* Header Name Cell needs higher z-index to stay above body rows */
+            th:first-child {
+                z-index: 1100;
+            }
+            
+            td.name-col { 
+                text-align: left; 
+                font-weight: bold; 
+                min-width: 100px; 
+                background-color: #fff; /* Opaque background */
+            }
+            
+            /* User Separation */
+            tr.user-start-row td {
+                border-top: 3px solid #880e4f;
+            }
+            
+            /* Checkbox Styles */
+            .cb-cell { cursor: pointer; }
+            input[type="checkbox"] { 
+                transform: scale(1.5); 
+                cursor: pointer; 
+                accent-color: #e91e63;
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Status */
+            .status-msg { text-align: right; font-size: 0.8em; color: #888; margin-top: 5px; min-height: 1.2em; }
+            
+            @media (max-width: 600px) {
+                body { padding: 5px; }
+                .container { padding: 5px; }
+                /* On mobile, let simple table scroll happen, but we want name sticky. */
+                th, td { padding: 10px 2px; font-size: 0.8em; }
+                input[type="checkbox"] { transform: scale(1.2); }
+                
+                /* Adjust top for header because legend might wrap */
+                .legend-bar { position: sticky; top: 0; padding: 5px; }
+                th { top: 60px; } 
+                
+                /* Ensure name col is visible */
+                td.name-col { min-width: 80px; font-size: 0.75em; }
+            }
+        </style>
+        <script>
+            // GAS API Configuration
+            const API_URL = "https://script.google.com/macros/s/AKfycbwDYIPoWIj_rPHvMeQKirmLsf8FfsvbP9WPi5Zq8Yk02ll-uTH40F19SV2sPUr1IZLy/exec"; 
+
+            document.addEventListener('DOMContentLoaded', () => {
+                // Load saved data
+                if(API_URL && API_URL.startsWith("http")) {
+                    fetch(API_URL)
+                        .then(r => r.json())
+                        .then(allData => {
+                            console.log("Loaded data:", allData);
+                            // Apply to checkboxes
+                            // data format expected: { "UserName": { "EventKey_Num": true, ... } }
+                            for (const [user, checks] of Object.entries(allData)) {
+                                if (!checks) continue;
+                                for (const [key, isChecked] of Object.entries(checks)) {
+                                    if(isChecked) {
+                                        const lastUnder = key.lastIndexOf('_');
+                                        if(lastUnder > 0) {
+                                            const eKey = key.substring(0, lastUnder);
+                                            const num = key.substring(lastUnder + 1);
+                                            
+                                            // Escape selectors for JS template literal inside Python f-string
+
+                                            const cb = document.querySelector(`input[data-user="${user}"][data-event="${eKey}"][data-num="${num}"]`);
+                                            if(cb) cb.checked = true;
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .catch(e => console.error("Load Error:", e));
+                }
+
+                // Change Handler
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        const user = e.target.dataset.user;
+                        const eventKey = e.target.dataset.event;
+                        const num = e.target.dataset.num;
+                        const isChecked = e.target.checked;
+                        
+                        // Limit Check: Max 2 per event/user
+                        if (isChecked) {
+                            const groupSelector = `input[data-user="${user}"][data-event="${eventKey}"]:checked`;
+                            const checkedCount = document.querySelectorAll(groupSelector).length;
+                            
+                            if (checkedCount > 2) {
+                                e.target.checked = false; // Revert
+                                alert("特典は1つのイベントにつき2つまでです。");
+                                return; // Stop saving
+                            }
+                        }
+                        
+                        saveData(user, num, isChecked, eventKey);
+                    });
+                });
+            });
+
+            let saveQueue = [];
+            let isSaving = false;
+
+            function saveData(user, num, isChecked, eventKey) {
+                if(!API_URL || !API_URL.startsWith("http")) return;
+                
+                const updateKey = `${eventKey}_${num}`;
+                const payload = {
+                    user: user,
+                    update: { [updateKey]: isChecked }
+                };
+                
+                // Add to queue
+                saveQueue.push(payload);
+                processQueue();
+            }
+            
+            function processQueue() {
+                if (isSaving || saveQueue.length === 0) return;
+                
+                isSaving = true;
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = `Saving... (Queue: ${saveQueue.length})`;
+                
+                const payload = saveQueue.shift(); // Get next item
+                
+                fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                })
+                .then(r => {
+                    // Success
+                    if (saveQueue.length === 0) {
+                        statusEl.innerText = "Saved";
+                        setTimeout(() => statusEl.innerText = "", 2000);
+                    } else {
+                         // Continue processing immediately
+                         // statusEl text will update on next loop
+                    }
+                })
+                .catch(e => {
+                    console.error(e);
+                    statusEl.innerText = "Error! Retrying...";
+                    // Optional: Put it back in queue? Or just log error.
+                    // For now, let's just log and move on to prevent blocking.
+                })
+                .finally(() => {
+                    isSaving = false;
+                    if (saveQueue.length > 0) {
+                        processQueue();
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>👑 2025年 特殊特典管理</h1>
+            <div id="status" class="status-msg"></div>
+            <!-- Sticky Legend Bar -->
+            <div class="legend-bar">
+                <span class="legend-item">①🍩手作り</span>
+                <span class="legend-item">②🎙️ボイス</span>
+                <span class="legend-item">③📷写真</span>
+                <span class="legend-item">④🎨イラスト</span>
+                <span class="legend-item">⑤👕アバター</span>
+                <span class="legend-item">⑥🎫抽選券</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Event</th>
+                        <th><div style="font-size:1.5em;">🍩</div>1</th>
+                        <th><div style="font-size:1.5em;">🎙️</div>2</th>
+                        <th><div style="font-size:1.5em;">📷</div>3</th>
+                        <th><div style="font-size:1.5em;">🎨</div>4</th>
+                        <th><div style="font-size:1.5em;">👕</div>5</th>
+                        <th><div style="font-size:1.5em;">🎫</div>6</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="18">🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ<br><span style="font-size:0.8em; color:#888;">(👑18)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">ポイント達成で豪華特典GET！頑張るあなたを応援しちゃいまSHOWROOM！vol.10</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="liver_support_sr10" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="liver_support_sr10" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="liver_support_sr10" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="liver_support_sr10" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="liver_support_sr10" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="liver_support_sr10" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">大人気の韓国発コスメ『TOCOBO』リップオイル＆Amazonギフトカード贈呈♡</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="tocobo_lipoil" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="tocobo_lipoil" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="tocobo_lipoil" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="tocobo_lipoil" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="tocobo_lipoil" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="tocobo_lipoil" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">KONAMI音ゲー・歌手など実績多数！Amatsukaによる楽曲提供イベント！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="amatsukamusic2" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="amatsukamusic2" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="amatsukamusic2" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="amatsukamusic2" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="amatsukamusic2" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="amatsukamusic2" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">かわいいは正義！推し色グッズを手に入れよう！アクリルキーホルダーver.</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kawaii_is_justice26" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kawaii_is_justice26" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kawaii_is_justice26" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kawaii_is_justice26" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kawaii_is_justice26" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kawaii_is_justice26" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">一流プロカメラマンによる宣材写真撮影権獲得イベント！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver17" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver17" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver17" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver17" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver17" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver17" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">2026年新春放送！地上波テレビ特別ドラマ出演者オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="qabhistory1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="qabhistory1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="qabhistory1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="qabhistory1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="qabhistory1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="qabhistory1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">【SR枠】2027年春劇場公開予定！映画出演キャストオーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_sr" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_sr" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_sr" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_sr" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_sr" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="movie_sr" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">あなたのために描く。夜瀬らうのオリジナルイラスト＆Tシャツ制作イベント！ </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="yoruserau" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="yoruserau" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="yoruserau" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="yoruserau" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="yoruserau" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="yoruserau" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">【女性枠】KAS主催ファッションショーのランウェイステージ出演権獲得イベント</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kyanly-model2508woman" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kyanly-model2508woman" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kyanly-model2508woman" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kyanly-model2508woman" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kyanly-model2508woman" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kyanly-model2508woman" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">あなた一人だけのオリジナル映像権獲得イベント！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver7" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver7" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver7" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver7" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver7" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver7" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">「赤坂舞台芸術祭2025」アクターズアンバサダー・舞台出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="akasakaart1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="akasakaart1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="akasakaart1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="akasakaart1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="akasakaart1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="akasakaart1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">【迫り来る赤い誘惑再び】エビ！！えびエビ海老ィィ〜〜〜〜！！！！！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="ebishrimpebishrimpebishrimp" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="ebishrimpebishrimpebishrimp" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="ebishrimpebishrimpebishrimp" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="ebishrimpebishrimpebishrimp" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="ebishrimpebishrimpebishrimp" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="ebishrimpebishrimpebishrimp" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">魅力を引き出す宣材写真撮影しましょう！イベント！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver4" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver4" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver4" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver4" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver4" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="adaptive_2025_ver4" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">かわいい物販グッズを作っちゃおう！箔押し！ワイドサイズインスタントフォト風カードver.</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="freely8" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="freely8" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="freely8" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="freely8" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="freely8" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="freely8" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">第2回ショートドラマ『スキマシネマ』出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="sukima_cinema2" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="sukima_cinema2" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="sukima_cinema2" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="sukima_cinema2" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="sukima_cinema2" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="sukima_cinema2" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">＼大正製薬「リポビタン」シリーズ／テレビCM出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="taisho1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="taisho1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="taisho1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="taisho1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="taisho1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="taisho1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">東海エリア地上波テレビ局にて放送！企業テレビ新CM出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kamiyashoukai" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kamiyashoukai" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kamiyashoukai" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kamiyashoukai" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kamiyashoukai" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="kamiyashoukai" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">大人気ショートドラマチャンネル【ぱくしードラマ】主要キャスト争奪戦！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="paxy_dorama" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="paxy_dorama" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="paxy_dorama" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="paxy_dorama" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="paxy_dorama" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="🐒サルクサ🐒𝓡𝓮𝓷とママ🎗️ユハ12日からガチ" data-event="paxy_dorama" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="11">昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜<br><span style="font-size:0.8em; color:#888;">(👑11)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">大人気の韓国発コスメ『TOCOBO』リップオイル＆Amazonギフトカード贈呈♡</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="tocobo_lipoil" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="tocobo_lipoil" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="tocobo_lipoil" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="tocobo_lipoil" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="tocobo_lipoil" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="tocobo_lipoil" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">一流プロカメラマンによる宣材写真撮影権獲得イベント！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver17" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver17" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver17" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver17" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver17" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver17" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">2026年新春放送！地上波テレビ特別ドラマ出演者オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="qabhistory1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="qabhistory1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="qabhistory1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="qabhistory1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="qabhistory1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="qabhistory1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">あなたのために描く。夜瀬らうのオリジナルイラスト＆Tシャツ制作イベント！ </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="yoruserau" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="yoruserau" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="yoruserau" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="yoruserau" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="yoruserau" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="yoruserau" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">【女性枠】KAS主催ファッションショーのランウェイステージ出演権獲得イベント</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="kyanly-model2508woman" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="kyanly-model2508woman" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="kyanly-model2508woman" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="kyanly-model2508woman" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="kyanly-model2508woman" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="kyanly-model2508woman" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">「赤坂舞台芸術祭2025」アクターズアンバサダー・舞台出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="akasakaart1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="akasakaart1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="akasakaart1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="akasakaart1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="akasakaart1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="akasakaart1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">魅力を引き出す宣材写真撮影しましょう！イベント！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver4" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver4" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver4" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver4" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver4" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="adaptive_2025_ver4" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">第2回ショートドラマ『スキマシネマ』出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="sukima_cinema2" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="sukima_cinema2" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="sukima_cinema2" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="sukima_cinema2" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="sukima_cinema2" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="sukima_cinema2" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">＼大正製薬「リポビタン」シリーズ／テレビCM出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="taisho1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="taisho1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="taisho1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="taisho1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="taisho1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="taisho1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">登録者数25万人超え！！『ホラーちゃんねる』ショートドラマ出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="horrorchanneljapan2025" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="horrorchanneljapan2025" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="horrorchanneljapan2025" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="horrorchanneljapan2025" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="horrorchanneljapan2025" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="horrorchanneljapan2025" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">大人気ショートドラマチャンネル【ぱくしードラマ】主要キャスト争奪戦！</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="paxy_dorama" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="paxy_dorama" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="paxy_dorama" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="paxy_dorama" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="paxy_dorama" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="昼🌞)ᘮㄋ@YUHA🎗🔥ガチ12日〜" data-event="paxy_dorama" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="8">剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸<br><span style="font-size:0.8em; color:#888;">(👑8)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">大人気の韓国発コスメ『TOCOBO』リップオイル＆Amazonギフトカード贈呈♡</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="tocobo_lipoil" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="tocobo_lipoil" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="tocobo_lipoil" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="tocobo_lipoil" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="tocobo_lipoil" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="tocobo_lipoil" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">2026年新春放送！地上波テレビ特別ドラマ出演者オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="qabhistory1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="qabhistory1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="qabhistory1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="qabhistory1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="qabhistory1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="qabhistory1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">あなたのために描く。夜瀬らうのオリジナルイラスト＆Tシャツ制作イベント！ </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="yoruserau" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="yoruserau" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="yoruserau" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="yoruserau" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="yoruserau" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="yoruserau" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">第2回ショートドラマ『スキマシネマ』出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="sukima_cinema2" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="sukima_cinema2" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="sukima_cinema2" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="sukima_cinema2" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="sukima_cinema2" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="sukima_cinema2" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">＼大正製薬「リポビタン」シリーズ／テレビCM出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="taisho1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="taisho1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="taisho1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="taisho1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="taisho1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="taisho1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">【至福の一粒】ちょっとリッチなチョコレートvol.2</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="chocolate_event2" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="chocolate_event2" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="chocolate_event2" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="chocolate_event2" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="chocolate_event2" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="chocolate_event2" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">登録者数25万人超え！！『ホラーちゃんねる』ショートドラマ出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="horrorchanneljapan2025" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="horrorchanneljapan2025" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="horrorchanneljapan2025" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="horrorchanneljapan2025" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="horrorchanneljapan2025" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="horrorchanneljapan2025" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">東海エリア地上波テレビ局にて放送！企業テレビ新CM出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="kamiyashoukai" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="kamiyashoukai" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="kamiyashoukai" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="kamiyashoukai" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="kamiyashoukai" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="剣(つるぎ）♡いと愛し♡優芭くんガチ中🎗️🦌♨️㊸" data-event="kamiyashoukai" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="3">YOSHI🔱EMILY&YUHA🎗️コヘミ🌺<br><span style="font-size:0.8em; color:#888;">(👑3)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">大人気の韓国発コスメ『TOCOBO』リップオイル＆Amazonギフトカード贈呈♡</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="tocobo_lipoil" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="tocobo_lipoil" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="tocobo_lipoil" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="tocobo_lipoil" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="tocobo_lipoil" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="tocobo_lipoil" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">2026年新春放送！地上波テレビ特別ドラマ出演者オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="qabhistory1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="qabhistory1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="qabhistory1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="qabhistory1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="qabhistory1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="qabhistory1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">「赤坂舞台芸術祭2025」アクターズアンバサダー・舞台出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="akasakaart1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="akasakaart1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="akasakaart1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="akasakaart1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="akasakaart1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="YOSHI🔱EMILY&YUHA🎗️コヘミ🌺" data-event="akasakaart1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="2">ハムハム ❅YUHA🎗(12日~ガチイベ🔥)<br><span style="font-size:0.8em; color:#888;">(👑2)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">第2回ショートドラマ『スキマシネマ』出演オーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="sukima_cinema2" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="sukima_cinema2" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="sukima_cinema2" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="sukima_cinema2" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="sukima_cinema2" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="sukima_cinema2" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                    <td style="text-align:left; font-size:0.9em;">＼大正製薬「リポビタン」シリーズ／テレビCM出演オーディション</td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="taisho1" data-num="1">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="taisho1" data-num="2">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="taisho1" data-num="3">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="taisho1" data-num="4">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="taisho1" data-num="5">
+                        </td>
+                    
+                        <td class="cb-cell">
+                            <input type="checkbox" data-user="ハムハム ❅YUHA🎗(12日~ガチイベ🔥)" data-event="taisho1" data-num="6">
+                        </td>
+                    
+                </tr>
+                
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">wanko🎗️<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">大人気の韓国発コスメ『TOCOBO』リップオイル＆Amazonギフトカード贈呈♡</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="tocobo_lipoil" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="tocobo_lipoil" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="tocobo_lipoil" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="tocobo_lipoil" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="tocobo_lipoil" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="wanko🎗️" data-event="tocobo_lipoil" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">❄いなっちくん🎗❄‪ <br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">大人気の韓国発コスメ『TOCOBO』リップオイル＆Amazonギフトカード贈呈♡</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="❄いなっちくん🎗❄‪ " data-event="tocobo_lipoil" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="❄いなっちくん🎗❄‪ " data-event="tocobo_lipoil" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="❄いなっちくん🎗❄‪ " data-event="tocobo_lipoil" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="❄いなっちくん🎗❄‪ " data-event="tocobo_lipoil" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="❄いなっちくん🎗❄‪ " data-event="tocobo_lipoil" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="❄いなっちくん🎗❄‪ " data-event="tocobo_lipoil" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">laid back🎗️<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">2026年新春放送！地上波テレビ特別ドラマ出演者オーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="laid back🎗️" data-event="qabhistory1" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="laid back🎗️" data-event="qabhistory1" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="laid back🎗️" data-event="qabhistory1" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="laid back🎗️" data-event="qabhistory1" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="laid back🎗️" data-event="qabhistory1" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="laid back🎗️" data-event="qabhistory1" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                <tr class="user-start-row">
+                    <td class="name-col" rowspan="1">リスナー活動停止中<br><span style="font-size:0.8em; color:#888;">(👑1)</span></td>
+                    <td style="text-align:left; font-size:0.9em;">2026年新春放送！地上波テレビ特別ドラマ出演者オーディション</td>
+                    
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="リスナー活動停止中" data-event="qabhistory1" data-num="1">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="リスナー活動停止中" data-event="qabhistory1" data-num="2">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="リスナー活動停止中" data-event="qabhistory1" data-num="3">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="リスナー活動停止中" data-event="qabhistory1" data-num="4">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="リスナー活動停止中" data-event="qabhistory1" data-num="5">
+                    </td>
+                
+                    <td class="cb-cell">
+                        <input type="checkbox" data-user="リスナー活動停止中" data-event="qabhistory1" data-num="6">
+                    </td>
+                
+                </tr>
+            
+                </tbody>
+            </table>
+        </div>
+    </body>
+    </html>
+    
